@@ -13,24 +13,31 @@ interface IThemeContext {
   setMode: (t: string) => void;
 }
 
-const ThemeContext = createContext<IThemeContext | undefined>(undefined);
+const ThemeContext = createContext<IThemeContext>({
+  mode: "dark",
+  setMode: () => {},
+});
 
 export function ThemeProvider({ children }: PropsWithChildren) {
   const [mode, setMode] = useState("");
 
   const handleThemeChange = () => {
-    if (mode === "dark") {
-      setMode("light");
-      document.body.classList.add("light");
-    } else {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
       setMode("dark");
       document.body.classList.add("dark");
+    } else {
+      setMode("light");
+      document.body.classList.remove("dark");
     }
   };
 
   useEffect(() => {
     handleThemeChange();
-  }, []);
+  }, [mode]);
 
   return (
     <ThemeContext.Provider value={{ mode, setMode }}>
@@ -41,8 +48,5 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
-  if (context === undefined) {
-    console.error("useTheme must be used within ThemeProvider");
-  }
   return context;
 }
