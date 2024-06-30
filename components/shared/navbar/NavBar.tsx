@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Theme from "./Theme";
+import MobileNav from "./MobileNav";
 
 const NavBar = () => {
   return (
@@ -16,7 +17,7 @@ const NavBar = () => {
           height={23}
         />
         <p className="h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900 max-sm:hidden">
-          Dev <span className="text-primary-500">Overflow</span>
+          Dev<span className="text-primary-500">Overflow</span>
         </p>
       </Link>
 
@@ -36,7 +37,7 @@ const NavBar = () => {
             }}
           />
         </SignedIn>
-        {/* MobileNavBar */}
+        <MobileNav />
       </div>
     </nav>
   );
