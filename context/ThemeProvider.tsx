@@ -30,7 +30,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     handleThemeChange();
-  }, [mode]);
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ mode, setMode }}>
