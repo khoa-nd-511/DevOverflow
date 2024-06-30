@@ -1,10 +1,36 @@
 import HomeFilters from "@/components/home/HomeFilters";
+import QuestionCard from "@/components/home/QuestionCard";
+
 import Filter from "@/components/shared/Filter";
+import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import React from "react";
+
+const questions = [
+  {
+    _id: 1,
+    title: "Title 1",
+    tags: [],
+    author: "John",
+    upvotes: 10,
+    views: 100,
+    answers: 2,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    _id: 1,
+    title: "Title 1",
+    tags: [],
+    author: "John",
+    upvotes: 10,
+    views: 100,
+    answers: 2,
+    createdAt: new Date("2024-07-07").toISOString(),
+  },
+];
 
 const page = () => {
   return (
@@ -32,6 +58,28 @@ const page = () => {
       </div>
 
       <HomeFilters />
+
+      <div className="mt-10 flex w-full flex-col gap-6">
+        {questions.length > 0 ? (
+          questions.map(({ _id, ...params }) => (
+            <QuestionCard key={_id} {...params} />
+          ))
+        ) : (
+          <NoResults
+            title="There’s no question to show"
+            description="Be the first to break the silence! 🚀 Ask a Question and kickstart the
+        discussion. our query could be the next big thing others learn from. Get
+        involved! 💡"
+            cta={
+              <Link href="/ask-question">
+                <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-primary-500 text-light-900 hover:bg-primary-500 ">
+                  Ask a question
+                </Button>
+              </Link>
+            }
+          />
+        )}
+      </div>
     </>
   );
 };
