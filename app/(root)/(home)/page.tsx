@@ -1,5 +1,8 @@
+import HomeFilters from "@/components/home/HomeFilters";
+import Filter from "@/components/shared/Filter";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { Button } from "@/components/ui/button";
+import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import React from "react";
 
@@ -20,8 +23,15 @@ const page = () => {
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch placeholder="Search questions" />
-        Filters
+
+        <Filter
+          filters={HomePageFilters}
+          otherClasses="min-h-[65px] sm:min-w-[170px]"
+          containerClasses="hidden max-md:flex"
+        />
       </div>
+
+      <HomeFilters />
     </>
   );
 };

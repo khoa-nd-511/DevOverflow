@@ -42,7 +42,7 @@ const LeftSidebar = () => {
       </section>
 
       <SignedOut>
-        <div className="flex flex-col gap-3">
+        <div className="mt-12 flex flex-col gap-3">
           <Link href="/sign-in">
             <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3">
               <Image
