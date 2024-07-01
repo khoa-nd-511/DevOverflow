@@ -131,8 +131,8 @@ export interface IGetAllUsersParams {
 
 export interface IUpdateUserParams {
   clerkId: string;
-  updateData: Partial<IUser>;
-  path: string;
+  payload: Partial<IUser>;
+  pathname: string;
 }
 
 export interface IToggleSaveQuestionParams {
