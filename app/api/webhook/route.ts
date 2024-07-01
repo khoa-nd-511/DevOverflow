@@ -61,6 +61,8 @@ export async function POST(req: Request) {
     const { id, email_addresses, image_url, username, first_name, last_name } =
       evt.data;
 
+    console.log("user.created", evt.data);
+
     const user = await createUser({
       clerkId: id,
       email: email_addresses[0]?.email_address,
@@ -75,6 +77,7 @@ export async function POST(req: Request) {
     const { id, email_addresses, image_url, username, first_name, last_name } =
       evt.data;
 
+    console.log("user.created", evt.data);
     const user = await updateUser({
       clerkId: id,
       payload: {
@@ -90,6 +93,9 @@ export async function POST(req: Request) {
 
   if (eventType === "user.deleted") {
     const { id } = evt.data;
+    console.log("user.created", evt.data);
+
+    console.log("deleteUser", id);
 
     const user = await deleteUser({
       clerkId: id!,
