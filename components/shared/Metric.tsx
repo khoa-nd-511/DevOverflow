@@ -43,13 +43,13 @@ const Metric = ({
 
   if (href) {
     return (
-      <Link href={href} className="flex-center gap-1">
+      <Link href={href} className="flex-center gap-2">
         {content}
       </Link>
     );
   }
 
-  return <div className="flex-center flex-wrap gap-1">{content}</div>;
+  return <div className="flex-center flex-wrap gap-2">{content}</div>;
 };
 
 export default Metric;
