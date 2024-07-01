@@ -59,12 +59,19 @@ export async function POST(req: Request) {
     const { id, email_addresses, image_url, username, first_name, last_name } =
       evt.data;
 
+    const email = email_addresses[0]?.email_address;
+
+    let u = username;
+    if (!u) {
+      u = email.slice(0, email.indexOf("@"));
+    }
+
     const user = await createUser({
       clerkId: id,
-      email: email_addresses[0]?.email_address,
+      email,
       name: [first_name, last_name].filter(Boolean).join(" "),
       picture: image_url,
-      username: username!,
+      username: u,
     });
     return NextResponse.json({ message: "OK", user });
   }
