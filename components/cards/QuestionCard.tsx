@@ -32,14 +32,6 @@ const QuestionCard = ({
   upvotes,
   views,
 }: IQuestionProps) => {
-  console.log("_id", _id);
-  console.log("answers", answers);
-  console.log("author", author);
-  console.log("tags", tags);
-  console.log("createdAt", createdAt);
-  console.log("title", title);
-  console.log("upvotes", upvotes);
-  console.log("views", views);
   return (
     <div className="card-wrapper rounded-lg p-9 sm:p-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
