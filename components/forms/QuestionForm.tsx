@@ -41,9 +41,9 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
   const form = useForm<z.infer<typeof askQuestionFormSchema>>({
     resolver: zodResolver(askQuestionFormSchema),
     defaultValues: {
-      title: "Test question",
-      description: "1".repeat(100),
-      tags: ["nextjs"],
+      title: "",
+      description: "",
+      tags: [],
     },
   });
 
@@ -56,7 +56,7 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
     try {
       await createQuestion({
         ...values,
-        author: mongoUserId,
+        author: JSON.parse(mongoUserId),
         pathname,
       });
 
@@ -83,7 +83,6 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
             message: "Tag must be less than or equal to 15 characters",
           });
         }
-        console.log(123, field.value, tagValue);
         if (!field.value.includes(tagValue)) {
           form.setValue("tags", [...field.value, tagValue]);
           tagInput.value = "";
