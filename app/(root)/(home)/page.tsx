@@ -1,34 +1,127 @@
-import HomeFilters from "@/components/home/HomeFilters";
-import QuestionCard from "@/components/home/QuestionCard";
+import React from "react";
 
+import HomeFilters from "@/components/home/HomeFilters";
 import Filter from "@/components/shared/Filter";
 import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
-import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
-import Link from "next/link";
-import React from "react";
+import QuestionCard from "@/components/cards/QuestionCard";
+import AskQuestionButton from "@/components/shared/AskQuestionButton";
 
 const questions = [
   {
-    _id: 1,
-    title: "Title 1",
-    tags: [],
-    author: "John",
+    _id: "1",
+    title: "How to learn TypeScript?",
+    tags: [
+      { _id: "t1", name: "TypeScript" },
+      { _id: "t2", name: "Programming" },
+    ],
+    author: {
+      _id: "a1",
+      name: "John Doe",
+      picture: "/assets/icons/avatar.svg",
+    },
     upvotes: 10,
-    views: 100,
-    answers: 2,
-    createdAt: new Date().toISOString(),
+    views: 1500000,
+    answers: [
+      {
+        text: "You can learn TypeScript by following official documentation and practicing regularly.",
+      },
+      { text: "Another answer: Enroll in online courses and build projects." },
+    ],
+    createdAt: new Date(),
   },
   {
-    _id: 1,
-    title: "Title 1",
-    tags: [],
-    author: "John",
-    upvotes: 10,
-    views: 100,
-    answers: 2,
-    createdAt: new Date("2024-07-07").toISOString(),
+    _id: "2",
+    title: "What are the best practices for React hooks?",
+    tags: [
+      { _id: "t3", name: "React" },
+      { _id: "t4", name: "Hooks" },
+    ],
+    author: {
+      _id: "a2",
+      name: "Jane Smith",
+      picture: "/assets/icons/avatar.svg",
+    },
+    upvotes: 8,
+    views: 123432,
+    answers: [
+      {
+        text: "One of the best practices is to keep hooks at the top level and never inside loops or conditions.",
+      },
+      { text: "Another answer: Use custom hooks to abstract complex logic." },
+    ],
+    createdAt: new Date("2024-07-01"),
+  },
+  {
+    _id: "3",
+    title: "What is the difference between let and var in JavaScript?",
+    tags: [
+      { _id: "t5", name: "JavaScript" },
+      { _id: "t6", name: "ES6" },
+    ],
+    author: {
+      _id: "a3",
+      name: "Alice Johnson",
+      picture: "/assets/icons/avatar.svg",
+    },
+    upvotes: 15,
+    views: 150,
+    answers: [
+      {
+        text: "The main difference is scope. 'var' is function-scoped, while 'let' is block-scoped.",
+      },
+      { text: "Another answer: 'let' also helps avoid issues with hoisting." },
+    ],
+    createdAt: new Date("2023-04-10"),
+  },
+  {
+    _id: "4",
+    title: "How do you manage state in a React application?",
+    tags: [
+      { _id: "t3", name: "React" },
+      { _id: "t7", name: "State Management" },
+    ],
+    author: {
+      _id: "a4",
+      name: "Bob Brown",
+      picture: "/assets/icons/avatar.svg",
+    },
+    upvotes: 12,
+    views: 120,
+    answers: [
+      {
+        text: "You can use built-in hooks like useState and useReducer for managing state.",
+      },
+      {
+        text: "Another answer: Consider using state management libraries like Redux or MobX for complex state.",
+      },
+    ],
+    createdAt: new Date("2023-03-05"),
+  },
+  {
+    _id: "5",
+    title: "What are some common mistakes in JavaScript?",
+    tags: [
+      { _id: "t5", name: "JavaScript" },
+      { _id: "t8", name: "Programming" },
+    ],
+    author: {
+      _id: "a5",
+      name: "Charlie Green",
+      picture: "/assets/icons/avatar.svg",
+    },
+    upvotes: 20,
+    views: 200,
+    answers: [
+      {
+        text: "Common mistakes include not understanding asynchronous code and not handling errors properly.",
+      },
+      {
+        text: "Another answer: Avoid using '==', always use '===' for comparisons.",
+      },
+    ],
+    createdAt: new Date("2023-02-25"),
   },
 ];
 
@@ -40,11 +133,7 @@ const page = () => {
           All Questions
         </h1>
 
-        <Link href="/ask-question">
-          <Button className="primary-gradient min-h-[46px] w-full px-4 py-3 text-light-900">
-            Ask A Question
-          </Button>
-        </Link>
+        <AskQuestionButton />
       </div>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
@@ -61,8 +150,8 @@ const page = () => {
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {questions.length > 0 ? (
-          questions.map(({ _id, ...params }) => (
-            <QuestionCard key={_id} {...params} />
+          questions.map((question) => (
+            <QuestionCard key={question._id} {...question} />
           ))
         ) : (
           <NoResults
@@ -70,13 +159,7 @@ const page = () => {
             description="Be the first to break the silence! 🚀 Ask a Question and kickstart the
         discussion. our query could be the next big thing others learn from. Get
         involved! 💡"
-            cta={
-              <Link href="/ask-question">
-                <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-primary-500 text-light-900 hover:bg-primary-500 ">
-                  Ask a question
-                </Button>
-              </Link>
-            }
+            cta={<AskQuestionButton otherClasses="mt-5" />}
           />
         )}
       </div>

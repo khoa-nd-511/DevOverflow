@@ -10,7 +10,7 @@ interface ILocalSearch {
   route?: string;
   iconPosition?: "left" | "right";
   placeholder?: string;
-  imgSrc?: string;
+  imgURL?: string;
   otherClasses?: string;
 }
 
@@ -18,7 +18,7 @@ const LocalSearch = ({
   placeholder = "",
   route = "/",
   iconPosition = "left",
-  imgSrc = "/assets/icons/search.svg",
+  imgURL = "/assets/icons/search.svg",
   otherClasses = "",
 }: ILocalSearch) => {
   return (
@@ -31,7 +31,7 @@ const LocalSearch = ({
         )}
       >
         <Image
-          src={imgSrc}
+          src={imgURL}
           alt="Search"
           width={24}
           height={24}
