@@ -55,13 +55,9 @@ export async function POST(req: Request) {
   // For this guide, you simply log the payload to the console
   const eventType = evt.type;
 
-  console.log("eventType", eventType);
-
   if (eventType === "user.created") {
     const { id, email_addresses, image_url, username, first_name, last_name } =
       evt.data;
-
-    console.log("user.created", evt.data);
 
     const user = await createUser({
       clerkId: id,
@@ -77,7 +73,6 @@ export async function POST(req: Request) {
     const { id, email_addresses, image_url, username, first_name, last_name } =
       evt.data;
 
-    console.log("user.created", evt.data);
     const user = await updateUser({
       clerkId: id,
       payload: {
@@ -93,9 +88,6 @@ export async function POST(req: Request) {
 
   if (eventType === "user.deleted") {
     const { id } = evt.data;
-    console.log("user.created", evt.data);
-
-    console.log("deleteUser", id);
 
     const user = await deleteUser({
       clerkId: id!,
