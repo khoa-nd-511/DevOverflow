@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { KeyboardEvent, useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { askQuestionFormSchema } from "@/lib/validations";
+import { Badge } from "../ui/badge";
+import Image from "next/image";
 
 const QuestionForm = () => {
   const editorRef = useRef<Editor>();
@@ -37,6 +39,40 @@ const QuestionForm = () => {
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
+
+  const handleKeyDownEvent = (
+    e: KeyboardEvent<HTMLInputElement>,
+    field: any
+  ) => {
+    if (e.key === "Enter" && field.name === "tags") {
+      e.preventDefault();
+      const tagInput = e.target as HTMLInputElement;
+      const tagValue = tagInput.value.trim();
+
+      console.log(123, field.value, tagValue);
+      if (tagValue !== "") {
+        if (tagValue.length > 15) {
+          form.setError("tags", {
+            type: "required",
+            message: "Tag must be less than or equal to 15 characters",
+          });
+        }
+        console.log(123, field.value, tagValue);
+        if (!field.value.includes(tagValue)) {
+          form.setValue("tags", [...field.value, tagValue]);
+          tagInput.value = "";
+          form.clearErrors("tags");
+        }
+      } else {
+        form.trigger();
+      }
+    }
+  };
+
+  const handleTagRemoval = (tag: string) => {
+    const tags = form.getValues("tags").filter((t) => t !== tag);
+    form.setValue("tags", tags);
+  };
 
   return (
     <Form {...form}>
@@ -104,7 +140,8 @@ const QuestionForm = () => {
                       "undo redo | " +
                       "codesample | bold italic forecolor | alignleft aligncenter " +
                       "alignright alignjustify | bullist numlist",
-                    content_style: "body { font-family:Inter; font-size:16px }",
+                    content_style:
+                      "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
                   }}
                 />
               </FormControl>
@@ -122,12 +159,35 @@ const QuestionForm = () => {
                 Tags <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-1">
-                {/* Add editor */}
-                <Input
-                  className="no-focus paragraph-regular light-border-2 background-light900_dark300 text-dark300_light700"
-                  placeholder="Enter up to 3 tags that are related to the question..."
-                  {...field}
-                />
+                <>
+                  <Input
+                    className="no-focus paragraph-regular light-border-2 background-light900_dark300 text-dark300_light700 disabled:bg-slate-300"
+                    placeholder="Enter up to 3 tags that are related to the question..."
+                    onKeyDown={(e) => handleKeyDownEvent(e, field)}
+                    disabled={field.value.length >= 3}
+                  />
+
+                  {field.value.length > 0 && (
+                    <div className="flex-start mt-2.5 gap-2.5">
+                      {field.value.map((tag: string) => (
+                        <Badge
+                          key={tag}
+                          className="subtle-medium background-light800_dark300 text-dark400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
+                        >
+                          {tag}
+                          <Image
+                            src="/assets/icons/close.svg"
+                            alt="close icon"
+                            width={12}
+                            height={12}
+                            className="cursor-pointer object-contain invert-0 dark:invert"
+                            onClick={() => handleTagRemoval(tag)}
+                          />
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </>
               </FormControl>
               <FormMessage className="text-red-500" />
             </FormItem>
