@@ -1,10 +1,12 @@
 "use client";
 
 import React, { KeyboardEvent, useRef, useState } from "react";
+import Image from "next/image";
 import { Editor } from "@tinymce/tinymce-react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,15 +17,22 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { askQuestionFormSchema } from "@/lib/validations";
-import { Badge } from "../ui/badge";
-import Image from "next/image";
+import { createQuestion } from "@/lib/actions/question.action";
 
 let type = "edit";
 type = "create";
 
-const QuestionForm = () => {
+interface IQuestionFormProps {
+  mongoUserId: string;
+}
+
+const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const editorRef = useRef<Editor>();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,23 +41,31 @@ const QuestionForm = () => {
   const form = useForm<z.infer<typeof askQuestionFormSchema>>({
     resolver: zodResolver(askQuestionFormSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      tags: [],
+      title: "Test question",
+      description: "1".repeat(100),
+      tags: ["nextjs"],
     },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof askQuestionFormSchema>) {
+  const handleFormSubmit = async (
+    values: z.infer<typeof askQuestionFormSchema>
+  ) => {
     setIsSubmitting(true);
 
     try {
-      //
+      await createQuestion({
+        ...values,
+        author: mongoUserId,
+        pathname,
+      });
+
+      router.push("/");
     } catch (error) {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   const handleKeyDownEvent = (
     e: KeyboardEvent<HTMLInputElement>,
@@ -59,7 +76,6 @@ const QuestionForm = () => {
       const tagInput = e.target as HTMLInputElement;
       const tagValue = tagInput.value.trim();
 
-      console.log(123, field.value, tagValue);
       if (tagValue !== "") {
         if (tagValue.length > 15) {
           form.setError("tags", {
@@ -87,7 +103,7 @@ const QuestionForm = () => {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleFormSubmit)}
         className="flex w-full flex-col gap-10 space-y-8"
       >
         <FormField
@@ -125,6 +141,8 @@ const QuestionForm = () => {
                     // @ts-ignore
                     editorRef.current = editor;
                   }}
+                  onBlur={field.onBlur}
+                  onEditorChange={(content) => field.onChange(content)}
                   initialValue=""
                   init={{
                     height: 500,
