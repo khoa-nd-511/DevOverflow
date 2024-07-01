@@ -1,6 +1,6 @@
 "use client";
 
-import React, { KeyboardEvent, useRef } from "react";
+import React, { KeyboardEvent, useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -20,8 +20,13 @@ import { askQuestionFormSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
 
+let type = "edit";
+type = "create";
+
 const QuestionForm = () => {
   const editorRef = useRef<Editor>();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof askQuestionFormSchema>>({
@@ -35,9 +40,14 @@ const QuestionForm = () => {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof askQuestionFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    setIsSubmitting(true);
+
+    try {
+      //
+    } catch (error) {
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const handleKeyDownEvent = (
@@ -197,7 +207,11 @@ const QuestionForm = () => {
           type="submit"
           className="paragraph-medium min-h-[46px] rounded-lg bg-primary-500 text-light-900"
         >
-          Submit
+          {isSubmitting ? (
+            <>{type === "edit" ? "Editting..." : "Submitting..."}</>
+          ) : (
+            <>{type === "edit" ? "Edit" : "Submit"}</>
+          )}
         </Button>
       </form>
     </Form>
