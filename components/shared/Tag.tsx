@@ -3,14 +3,14 @@ import React from "react";
 import { Badge } from "../ui/badge";
 
 interface ITag {
-  _id: number;
+  _id: string;
   name: string;
-  totalQuestions: number;
+  totalQuestions?: number;
   showCount?: boolean;
 }
 
 const Tag = (props: ITag) => {
-  const { _id, name, showCount, totalQuestions } = props;
+  const { _id, name, showCount = false, totalQuestions = 0 } = props;
   return (
     <div key={_id} className="flex items-center justify-between">
       <Link href="/" className="body-medium text-dark500_light700 font-normal">

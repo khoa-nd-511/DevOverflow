@@ -8,49 +8,49 @@ import Tag from "../Tag";
 
 const questions = [
   {
-    _id: 1,
+    _id: "1",
     title:
       "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
   },
   {
-    _id: 2,
+    _id: "2",
     title:
       "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
   },
   {
-    _id: 3,
+    _id: "3",
     title:
       "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
   },
   {
-    _id: 4,
+    _id: "4",
     title:
       "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
   },
   {
-    _id: 5,
+    _id: "5",
     title:
       "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
   },
 ];
 const tags = [
   {
-    _id: 1,
+    _id: "1",
     name: "NextJS",
     totalQuestions: 30,
   },
   {
-    _id: 2,
+    _id: "2",
     name: "ReactJS",
     totalQuestions: 10,
   },
   {
-    _id: 3,
+    _id: "3",
     name: "CSS",
     totalQuestions: 5,
   },
   {
-    _id: 4,
+    _id: "4",
     name: "HTML",
     totalQuestions: 3,
   },
