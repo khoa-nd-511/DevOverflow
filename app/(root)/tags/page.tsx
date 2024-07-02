@@ -33,7 +33,12 @@ const Tag = async () => {
       <div className="mt-10 flex w-full flex-wrap gap-6">
         {tags.length > 0 ? (
           tags.map(({ _id, name, questions }) => (
-            <TagCard key={_id} id={_id} name={name} questions={questions} />
+            <TagCard
+              key={_id as string}
+              id={_id as string}
+              name={name}
+              questions={questions}
+            />
           ))
         ) : (
           <NoResults

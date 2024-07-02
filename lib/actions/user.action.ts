@@ -1,6 +1,6 @@
 "use server";
 
-import User from "@/database/user.model";
+import UserModel from "@/database/user.model";
 import { connectToDB } from "../mongoose";
 import {
   ICreateUserParams,
@@ -9,7 +9,7 @@ import {
   IUpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
-import Question from "@/database/question.model";
+import QuestionModel from "@/database/question.model";
 
 export async function getAllUsers(params: IGetAllUsersParams) {
   try {
@@ -17,7 +17,7 @@ export async function getAllUsers(params: IGetAllUsersParams) {
 
     // const { page = 1, pageSize = 10, filter, searchQuery } = params;
 
-    const users = await User.find({}).sort({ joinedAt: -1 });
+    const users = await UserModel.find({}).sort({ joinedAt: -1 });
 
     return { users };
   } catch (error) {
@@ -31,7 +31,11 @@ export async function getUserById(params: any) {
   try {
     await connectToDB();
 
-    const user = await User.findOne({ clerkId: userId });
+    const user = await UserModel.findOne({ clerkId: userId });
+
+    if (!user) {
+      throw new Error("User not found" + userId);
+    }
 
     return user;
   } catch (error) {
@@ -44,7 +48,7 @@ export async function createUser(params: ICreateUserParams) {
   try {
     await connectToDB();
 
-    const user = await User.create(params);
+    const user = await UserModel.create(params);
 
     return user;
   } catch (error) {
@@ -59,7 +63,7 @@ export async function updateUser(params: IUpdateUserParams) {
 
     const { clerkId, payload, pathname } = params;
 
-    await User.findOneAndUpdate({ clerkId }, payload, { new: true });
+    await UserModel.findOneAndUpdate({ clerkId }, payload, { new: true });
 
     revalidatePath(pathname);
   } catch (error) {
@@ -74,22 +78,22 @@ export async function deleteUser(params: IDeleteUserParams) {
 
     const { clerkId } = params;
 
-    const user = await User.findOneAndDelete({ clerkId });
+    const user = await UserModel.findOneAndDelete({ clerkId });
 
     if (!user) {
       throw new Error("User not found");
     }
 
     // delete questions
-    /* const userQuestionIds = */ await Question.find({
+    /* const userQuestionIds = */ await QuestionModel.find({
       author: user._id,
     }).distinct("_id");
 
-    await Question.deleteMany({ author: user._id });
+    await QuestionModel.deleteMany({ author: user._id });
 
     // TODO: delete user answers, comments
 
-    const deletedUser = await User.findByIdAndDelete(user._id);
+    const deletedUser = await UserModel.findByIdAndDelete(user._id);
 
     return deletedUser;
   } catch (error) {

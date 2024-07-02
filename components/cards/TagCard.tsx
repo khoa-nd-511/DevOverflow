@@ -1,6 +1,7 @@
 import React from "react";
-import { Badge } from "../ui/badge";
 import Link from "next/link";
+
+import { Badge } from "../ui/badge";
 
 interface ITagCardProps {
   id: string;

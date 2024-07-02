@@ -1,7 +1,7 @@
-import User from "@/database/user.model";
+import UserModel from "@/database/user.model";
 import { connectToDB } from "../mongoose";
 import { IGetAllTagsParams, IGetTopInteractedTagsParams } from "./shared.types";
-import Tag from "@/database/tag.model";
+import TagModel, { ITag } from "@/database/tag.model";
 
 export async function getAllTags(params: IGetAllTagsParams) {
   try {
@@ -9,7 +9,7 @@ export async function getAllTags(params: IGetAllTagsParams) {
 
     const { page = 1, size = 10 } = params;
 
-    const tags = await Tag.find({})
+    const tags: ITag[] = await TagModel.find({})
       .limit(size)
       .skip((page - 1) * size)
       .sort({ createdAt: -1 });
@@ -29,7 +29,7 @@ export async function getTopInteractedTags(
 
     const { userId } = params;
 
-    const user = await User.findById(userId);
+    const user = await UserModel.findById(userId);
 
     if (!user) {
       throw new Error("User not found" + userId);

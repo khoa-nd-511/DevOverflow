@@ -75,8 +75,8 @@ const QuestionDetailsPage = async ({
       <ParsedHTML data={description} />
 
       <div className="mt-8 flex flex-wrap gap-2">
-        {tags.map(({ _id, name }) => (
-          <Tag key={_id} name={name} _id={_id} />
+        {tags.map(({ name, _id }) => (
+          <Tag key={String(_id)} name={name} id={String(_id)} />
         ))}
       </div>
     </>

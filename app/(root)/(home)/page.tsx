@@ -39,8 +39,8 @@ const Home = async () => {
           questions.map((question) => {
             return (
               <QuestionCard
-                key={question._id}
-                _id={question._id}
+                key={question._id as string}
+                _id={question._id as string}
                 answers={question.answers}
                 author={question.author}
                 createdAt={question.createdAt}

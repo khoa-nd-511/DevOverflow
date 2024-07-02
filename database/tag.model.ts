@@ -1,10 +1,12 @@
-import { Document, Schema, model, models, InferSchemaType } from "mongoose";
+import { Document, Schema, model, models, Model } from "mongoose";
 
-interface ITagSchema extends Document {
+export interface ITagSchema extends Document {
   name: string;
   description: string;
   questions: Schema.Types.ObjectId[];
   followers: Schema.Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const TagSchema = new Schema<ITagSchema>(
@@ -17,8 +19,6 @@ const TagSchema = new Schema<ITagSchema>(
   { timestamps: true }
 );
 
-const Tag = models.Tag || model("Tag", TagSchema);
+const TagModel: Model<ITagSchema> = models.Tag || model("Tag", TagSchema);
 
-export type ITag = InferSchemaType<typeof TagSchema>;
-
-export default Tag;
+export default TagModel;

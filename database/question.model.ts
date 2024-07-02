@@ -1,17 +1,26 @@
-import { Document, Schema, model, models } from "mongoose";
+import {
+  Document,
+  InferSchemaType,
+  Model,
+  Schema,
+  model,
+  models,
+} from "mongoose";
 
-export interface IQuestion extends Document {
+export interface IQuestionSchema extends Document {
   title: string;
   description: string;
   views: number;
   tags: Schema.Types.ObjectId[];
-  upvoted: Schema.Types.ObjectId[];
-  downvoted: Schema.Types.ObjectId[];
+  upvotes: Schema.Types.ObjectId[];
+  downvotes: Schema.Types.ObjectId[];
   author: Schema.Types.ObjectId;
   answers: Schema.Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const QuestionSchema = new Schema(
+const QuestionSchema = new Schema<IQuestionSchema>(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
@@ -25,6 +34,9 @@ const QuestionSchema = new Schema(
   { timestamps: true }
 );
 
-const Question = models.Question || model("Question", QuestionSchema);
+const QuestionModel: Model<IQuestionSchema> =
+  models.Question || model("Question", QuestionSchema);
 
-export default Question;
+export type IQuestion = InferSchemaType<typeof QuestionSchema>;
+
+export default QuestionModel;

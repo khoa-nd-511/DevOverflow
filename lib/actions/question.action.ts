@@ -1,24 +1,29 @@
 "use server";
+import { revalidatePath } from "next/cache";
 
-import Question from "@/database/question.model";
-import Tag from "@/database/tag.model";
+import QuestionModel from "@/database/question.model";
+import TagModel, { ITagSchema } from "@/database/tag.model";
+import UserModel, { IUser, IUserSchema } from "@/database/user.model";
 
-import { connectToDB } from "../mongoose";
 import {
   ICreateQuestionParams,
   IGetQuestionByIdParams,
   IGetQuestionsParams,
 } from "./shared.types";
-import User from "@/database/user.model";
-import { revalidatePath } from "next/cache";
+import { connectToDB } from "../mongoose";
 
 export async function getQuestions(params: IGetQuestionsParams) {
   try {
     await connectToDB();
 
-    const questions = await Question.find({})
-      .populate({ path: "tags", model: Tag })
-      .populate({ path: "author", model: User })
+    const questions = await QuestionModel.find({})
+      .populate<{
+        tags: ITagSchema[];
+      }>({ path: "tags", model: TagModel })
+      .populate<{ author: IUser }>({
+        path: "author",
+        model: UserModel,
+      })
       .sort({ createdAt: -1 });
 
     return { questions };
@@ -33,17 +38,23 @@ export async function getQuestionById(params: IGetQuestionByIdParams) {
   try {
     await connectToDB();
 
-    const question = await Question.findById(questionId)
-      .populate({
+    const question = await QuestionModel.findById(questionId)
+      .populate<{ tags: Pick<ITagSchema, "_id" | "name">[] }>({
         path: "tags",
-        model: Tag,
+        model: TagModel,
         select: "_id name",
       })
-      .populate({
+      .populate<{
+        author: Pick<IUserSchema, "_id" | "picture" | "name">;
+      }>({
         path: "author",
-        model: User,
+        model: UserModel,
         select: "_id clerkId name picture",
       });
+
+    if (!question) {
+      throw new Error("Unable to find question" + questionId);
+    }
 
     return question;
   } catch (error) {
@@ -59,7 +70,7 @@ export async function createQuestion(params: ICreateQuestionParams) {
     const { title, description, tags, author, pathname } = params;
 
     // create a skeleton for question
-    const question = await Question.create({
+    const question = await QuestionModel.create({
       title,
       description,
       author,
@@ -67,7 +78,7 @@ export async function createQuestion(params: ICreateQuestionParams) {
 
     const tagDocuments = [];
     for (const tag of tags) {
-      const existingTag = await Tag.findOneAndUpdate(
+      const existingTag = await TagModel.findOneAndUpdate(
         { name: { $regex: new RegExp(`^${tag}$`, "i") } },
         { $setOnInsert: { name: tag }, $push: { questions: question._id } },
         { upsert: true, new: true }
@@ -77,7 +88,7 @@ export async function createQuestion(params: ICreateQuestionParams) {
     }
 
     // populate question with tags found/created
-    await Question.findByIdAndUpdate(question._id, {
+    await QuestionModel.findByIdAndUpdate(question._id, {
       $push: { tags: { $each: tagDocuments } },
     });
 

@@ -8,7 +8,6 @@ const Page = async () => {
   const { userId } = auth();
 
   if (!userId) {
-    console.log("HERE !!!!!!!!!!!");
     redirect("/sign-in");
   }
 

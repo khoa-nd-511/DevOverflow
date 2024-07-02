@@ -1,4 +1,4 @@
-import { Document, InferSchemaType, Schema, model, models } from "mongoose";
+import { Document, Model, Schema, model, models } from "mongoose";
 
 export interface IUserSchema extends Document {
   clerkId: string;
@@ -12,6 +12,8 @@ export interface IUserSchema extends Document {
   website?: string;
   reputation?: number;
   saved: Schema.Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const UserSchema: Schema = new Schema<IUserSchema>(
@@ -31,8 +33,7 @@ const UserSchema: Schema = new Schema<IUserSchema>(
   { timestamps: true }
 );
 
-const User = models.User || model<IUserSchema>("User", UserSchema);
+const UserModel: Model<IUserSchema> =
+  models.User || model<IUserSchema>("User", UserSchema);
 
-export type IUser = InferSchemaType<typeof UserSchema>;
-
-export default User;
+export default UserModel;

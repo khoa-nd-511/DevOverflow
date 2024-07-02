@@ -1,7 +1,8 @@
 import Image from "next/image";
 import React from "react";
-import Tag from "../shared/Tag";
 import { getTopInteractedTags } from "@/lib/actions/tag.action";
+
+import Tag from "../shared/Tag";
 
 interface IUserCardProps {
   id: string;
@@ -29,7 +30,7 @@ const UserCard = async ({ id, imgURL, name, username }: IUserCardProps) => {
 
         <div className="flex flex-wrap gap-2">
           {tags.map(({ _id, name }) => (
-            <Tag key={_id} _id={_id} name={name} />
+            <Tag key={_id} id={_id} name={name} />
           ))}
         </div>
       </div>

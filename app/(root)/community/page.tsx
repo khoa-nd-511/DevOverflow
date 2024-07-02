@@ -34,8 +34,8 @@ const Community = async () => {
           users.map(({ _id, name, username, picture }) => {
             return (
               <UserCard
-                key={_id}
-                id={_id}
+                key={_id as string}
+                id={_id as string}
                 name={name}
                 username={username}
                 imgURL={picture}

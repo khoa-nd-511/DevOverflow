@@ -1,21 +1,17 @@
 import Link from "next/link";
 import React from "react";
+import { formatNumber, getTimestamp } from "@/lib/utils";
+import { IUserSchema } from "@/database/user.model";
+import { ITagSchema } from "@/database/tag.model";
+
 import Tag from "../shared/Tag";
 import Metric from "../shared/Metric";
-import { formatNumber, getTimestamp } from "@/lib/utils";
 
 interface IQuestionProps {
   _id: string;
   title: string;
-  tags: {
-    _id: string;
-    name: string;
-  }[];
-  author: {
-    _id: string;
-    name: string;
-    picture: string;
-  };
+  tags: Pick<ITagSchema, "_id" | "name">[];
+  author: Pick<IUserSchema, "_id" | "picture" | "name">;
   upvotes: number;
   views: number;
   answers: Array<object>;
@@ -52,7 +48,7 @@ const QuestionCard = ({
 
       <div className="mt-3.5 flex flex-wrap gap-2">
         {tags.map(({ _id, name }) => (
-          <Tag key={_id} _id={_id} name={name} />
+          <Tag key={_id as string} id={_id as string} name={name} />
         ))}
       </div>
 
