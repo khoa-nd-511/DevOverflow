@@ -13,7 +13,7 @@ const CTAButton = ({ label, href, otherClasses = "" }: ICTAButtonProps) => {
   return (
     <Link href={href}>
       <Button
-        className={`paragraph-medium min-h-[42px] rounded-lg bg-primary-500 text-light-900 hover:bg-primary-500 ${otherClasses}`}
+        className={`paragraph-medium primary-gradient hover:primary-gradient min-h-[42px] rounded-lg text-light-900 ${otherClasses}`}
       >
         {label}
       </Button>

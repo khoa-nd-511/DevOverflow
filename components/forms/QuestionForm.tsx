@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { askQuestionFormSchema } from "@/lib/validations";
 import { createQuestion } from "@/lib/actions/question.action";
+import { useTheme } from "@/context/ThemeProvider";
 
 let type = "edit";
 type = "create";
@@ -30,6 +31,7 @@ interface IQuestionFormProps {
 }
 
 const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
+  const { mode } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -169,6 +171,8 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
                       "alignright alignjustify | bullist numlist",
                     content_style:
                       "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+                    skin: mode === "dark" ? "oxide-dark" : "oxide",
+                    content_css: mode === "dark" ? "dark" : "light",
                   }}
                 />
               </FormControl>
@@ -222,7 +226,7 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
         />
         <Button
           type="submit"
-          className="paragraph-medium min-h-[46px] rounded-lg bg-primary-500 text-light-900"
+          className="paragraph-medium primary-gradient min-h-[46px] rounded-lg text-white"
         >
           {isSubmitting ? (
             <>{type === "edit" ? "Editting..." : "Submitting..."}</>

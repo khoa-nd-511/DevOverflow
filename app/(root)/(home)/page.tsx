@@ -6,7 +6,7 @@ import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { HomePageFilters } from "@/constants/filters";
 import QuestionCard from "@/components/cards/QuestionCard";
-import CTAButton from "@/components/shared/AskQuestionButton";
+import CTAButton from "@/components/shared/CTAButton";
 import { getQuestions } from "@/lib/actions/question.action";
 
 const Home = async () => {
@@ -46,7 +46,7 @@ const Home = async () => {
                 createdAt={question.createdAt}
                 tags={question.tags}
                 title={question.title}
-                upvotes={question.upvotes}
+                upvotes={question.upvotes.length}
                 views={question.views}
               />
             );

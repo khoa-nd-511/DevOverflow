@@ -1,5 +1,5 @@
 import UserCard from "@/components/cards/UserCard";
-import CTAButton from "@/components/shared/AskQuestionButton";
+import CTAButton from "@/components/shared/CTAButton";
 import Filter from "@/components/shared/Filter";
 import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";

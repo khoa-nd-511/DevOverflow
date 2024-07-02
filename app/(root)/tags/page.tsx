@@ -4,7 +4,7 @@ import TagCard from "@/components/cards/TagCard";
 import Filter from "@/components/shared/Filter";
 import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
-import CTAButton from "@/components/shared/AskQuestionButton";
+import CTAButton from "@/components/shared/CTAButton";
 import { TagFilters } from "@/constants/filters";
 import { getAllTags } from "@/lib/actions/tag.action";
 

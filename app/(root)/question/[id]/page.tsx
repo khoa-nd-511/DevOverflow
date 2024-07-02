@@ -7,6 +7,7 @@ import ParsedHTML from "@/components/shared/ParsedHTML";
 import Tag from "@/components/shared/Tag";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { formatNumber, getTimestamp } from "@/lib/utils";
+import AnswerForm from "@/components/forms/AnswerForm";
 
 const QuestionDetailsPage = async ({
   params: { id },
@@ -47,7 +48,7 @@ const QuestionDetailsPage = async ({
           {title}
         </h2>
 
-        <div className="mb-8 mr-auto mt-5 flex flex-wrap gap-4">
+        <div className="mr-auto mt-5 flex flex-wrap gap-4">
           <Metric
             imgURL="/assets/icons/clock.svg"
             alt="Clcok icon"
@@ -72,12 +73,16 @@ const QuestionDetailsPage = async ({
         </div>
       </div>
 
-      <ParsedHTML data={description} />
-
-      <div className="mt-8 flex flex-wrap gap-2">
+      <div className="mb-8 mt-5 flex flex-wrap gap-2">
         {tags.map(({ name, _id }) => (
           <Tag key={String(_id)} name={name} id={String(_id)} />
         ))}
+      </div>
+
+      <ParsedHTML data={description} />
+
+      <div className="mt-8">
+        <AnswerForm />
       </div>
     </>
   );
