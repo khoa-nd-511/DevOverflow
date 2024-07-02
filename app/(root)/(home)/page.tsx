@@ -23,7 +23,7 @@ const Home = async () => {
       </div>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <LocalSearch placeholder="Search questions" />
+        <LocalSearch placeholder="Enter question's title..." />
 
         <Filter
           filters={HomePageFilters}
