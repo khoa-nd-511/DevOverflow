@@ -1,5 +1,4 @@
 import UserCard from "@/components/cards/UserCard";
-import UsersFilter from "@/components/community/UsersFilter";
 import Filter from "@/components/shared/Filter";
 import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
@@ -26,11 +25,8 @@ const Community = async () => {
         <Filter
           filters={UserFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
-          containerClasses="hidden max-md:flex"
         />
       </div>
-
-      <UsersFilter />
 
       <div className="mt-10 flex w-full flex-wrap gap-6">
         {users.length > 0 ? (
