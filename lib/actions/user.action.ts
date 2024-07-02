@@ -5,10 +5,26 @@ import { connectToDB } from "../mongoose";
 import {
   ICreateUserParams,
   IDeleteUserParams,
+  IGetAllUsersParams,
   IUpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
+
+export async function getAllUsers(params: IGetAllUsersParams) {
+  try {
+    await connectToDB();
+
+    // const { page = 1, pageSize = 10, filter, searchQuery } = params;
+
+    const users = await User.find({}).sort({ joinedAt: -1 });
+
+    return { users };
+  } catch (error) {
+    console.error("unable to fetch users");
+    throw error;
+  }
+}
 
 export async function getUserById(params: any) {
   const { userId } = params;
