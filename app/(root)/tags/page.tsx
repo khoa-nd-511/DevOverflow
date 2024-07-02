@@ -1,10 +1,16 @@
+import React from "react";
+
+import TagCard from "@/components/cards/TagCard";
 import Filter from "@/components/shared/Filter";
 import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
+import CTAButton from "@/components/shared/AskQuestionButton";
 import { TagFilters } from "@/constants/filters";
-import React from "react";
+import { getAllTags } from "@/lib/actions/tag.action";
 
-const Community = async () => {
+const Tag = async () => {
+  const { tags } = await getAllTags({});
+
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between sm:flex-row">
@@ -13,7 +19,7 @@ const Community = async () => {
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
-          route="/community"
+          route="/tags"
           placeholder="Enter tag name..."
           otherClasses="flex-1"
         />
@@ -25,10 +31,20 @@ const Community = async () => {
       </div>
 
       <div className="mt-10 flex w-full flex-wrap gap-6">
-        <NoResults title="No Tags" description="" />
+        {tags.length > 0 ? (
+          tags.map(({ _id, name, questions }) => (
+            <TagCard key={_id} id={_id} name={name} questions={questions} />
+          ))
+        ) : (
+          <NoResults
+            title="No Tags"
+            description="Looks like there has been no questions asked yet"
+            cta={<CTAButton label="Ask a question" href="/ask-question" />}
+          />
+        )}
       </div>
     </>
   );
 };
 
-export default Community;
+export default Tag;

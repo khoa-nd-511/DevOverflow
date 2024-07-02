@@ -93,7 +93,7 @@ export interface IEditQuestionParams {
 
 export interface IGetAllTagsParams {
   page?: number;
-  pageSize?: number;
+  size?: number;
   filter?: string;
   searchQuery?: string;
 }

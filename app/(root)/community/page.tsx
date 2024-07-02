@@ -1,4 +1,5 @@
 import UserCard from "@/components/cards/UserCard";
+import CTAButton from "@/components/shared/AskQuestionButton";
 import Filter from "@/components/shared/Filter";
 import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
@@ -42,7 +43,11 @@ const Community = async () => {
             );
           })
         ) : (
-          <NoResults title="No Users" description="" />
+          <NoResults
+            title="Uh oh"
+            description="Be the first one to sign up and ask a question !!!"
+            cta={<CTAButton href="sign-up" label="Sign Up" />}
+          />
         )}
       </div>
     </>

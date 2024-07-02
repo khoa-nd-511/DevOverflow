@@ -31,7 +31,7 @@ const NoResults = ({ title, description, cta }: INoResultsProps) => {
         {description}
       </p>
 
-      {cta}
+      <div className="mt-5">{cta}</div>
     </div>
   );
 };

@@ -1,6 +1,25 @@
 import User from "@/database/user.model";
 import { connectToDB } from "../mongoose";
-import { IGetTopInteractedTagsParams } from "./shared.types";
+import { IGetAllTagsParams, IGetTopInteractedTagsParams } from "./shared.types";
+import Tag from "@/database/tag.model";
+
+export async function getAllTags(params: IGetAllTagsParams) {
+  try {
+    await connectToDB();
+
+    const { page = 1, size = 10 } = params;
+
+    const tags = await Tag.find({})
+      .limit(size)
+      .skip((page - 1) * size)
+      .sort({ createdAt: -1 });
+
+    return { tags };
+  } catch (error) {
+    console.error(`Unable to get all tags`, error);
+    throw error;
+  }
+}
 
 export async function getTopInteractedTags(
   params: IGetTopInteractedTagsParams

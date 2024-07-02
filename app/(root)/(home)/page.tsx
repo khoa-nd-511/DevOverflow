@@ -6,7 +6,7 @@ import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { HomePageFilters } from "@/constants/filters";
 import QuestionCard from "@/components/cards/QuestionCard";
-import AskQuestionButton from "@/components/shared/AskQuestionButton";
+import CTAButton from "@/components/shared/AskQuestionButton";
 import { getQuestions } from "@/lib/actions/question.action";
 
 const Home = async () => {
@@ -19,7 +19,7 @@ const Home = async () => {
           All Questions
         </h1>
 
-        <AskQuestionButton />
+        <CTAButton label="Ask a question" href="/ask-question" />
       </div>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
@@ -57,7 +57,13 @@ const Home = async () => {
             description="Be the first to break the silence! 🚀 Ask a Question and kickstart the
         discussion. our query could be the next big thing others learn from. Get
         involved! 💡"
-            cta={<AskQuestionButton otherClasses="mt-5" />}
+            cta={
+              <CTAButton
+                label="Ask a question"
+                href="/ask-question"
+                otherClasses="mt-5"
+              />
+            }
           />
         )}
       </div>

@@ -3,20 +3,22 @@ import Link from "next/link";
 
 import { Button } from "../ui/button";
 
-interface IAskQuestionButtonProps {
+interface ICTAButtonProps {
+  href: string;
+  label: string;
   otherClasses?: string;
 }
 
-const AskQuestionButton = ({ otherClasses = "" }: IAskQuestionButtonProps) => {
+const CTAButton = ({ label, href, otherClasses = "" }: ICTAButtonProps) => {
   return (
-    <Link href="/ask-question">
+    <Link href={href}>
       <Button
         className={`paragraph-medium min-h-[42px] rounded-lg bg-primary-500 text-light-900 hover:bg-primary-500 ${otherClasses}`}
       >
-        Ask a question
+        {label}
       </Button>
     </Link>
   );
 };
 
-export default AskQuestionButton;
+export default CTAButton;
