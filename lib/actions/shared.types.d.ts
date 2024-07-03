@@ -7,7 +7,7 @@ export interface ICreateAnswerParams {
     content: string;
     author: string; // User ID
     question: string; // Question ID
-    path: string;
+    pathname: string;
 }
 
 export interface IGetAnswersParams {
@@ -22,12 +22,12 @@ export interface IAnswerVoteParams {
     userId: string;
     hasupVoted: boolean;
     hasdownVoted: boolean;
-    path: string;
+    pathname: string;
 }
 
 export interface IDeleteAnswerParams {
     answerId: string;
-    path: string;
+    pathname: string;
 }
 
 export interface ISearchParams {
@@ -76,19 +76,19 @@ export interface IQuestionVoteParams {
     userId: string;
     hasupVoted: boolean;
     hasdownVoted: boolean;
-    path: string;
+    pathname: string;
 }
 
 export interface IDeleteQuestionParams {
     questionId: string;
-    path: string;
+    pathname: string;
 }
 
 export interface IEditQuestionParams {
     questionId: string;
     title: string;
     content: string;
-    path: string;
+    pathname: string;
 }
 
 export interface IGetAllTagsParams {
@@ -138,7 +138,7 @@ export interface IUpdateUserParams {
 export interface IToggleSaveQuestionParams {
     userId: string;
     questionId: string;
-    path: string;
+    pathname: string;
 }
 
 export interface IGetSavedQuestionsParams {
