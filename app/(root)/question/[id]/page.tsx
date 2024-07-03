@@ -8,84 +8,96 @@ import Tag from "@/components/shared/Tag";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { formatNumber, getTimestamp } from "@/lib/utils";
 import AnswerForm from "@/components/forms/AnswerForm";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { getUserById } from "@/lib/actions/user.action";
 
 const QuestionDetailsPage = async ({
-  params: { id },
+    params: { id },
 }: {
-  params: { id: string };
+    params: { id: string };
 }) => {
-  const question = await getQuestionById({ questionId: id });
+    const { userId } = auth();
 
-  // console.log("question", question);
+    if (!userId) {
+        redirect("/sign-in");
+    }
 
-  const { author, title, createdAt, answers, views, description, tags } =
-    question;
+    const mongoUser = await getUserById({ userId });
 
-  return (
-    <>
-      <div className="flex-start w-full flex-col">
-        <div className="flex w-full flex-col-reverse gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-          <Link
-            href={`/profile/${author._id}`}
-            className="flex w-full items-center justify-start gap-1"
-          >
-            <Image
-              src={author.picture}
-              width={22}
-              height={22}
-              alt="Author's profile picture"
-              className="rounded-full"
-            />
-            <p className="paragraph-semibold text-dark300_light700">
-              {author.name}
-            </p>
-          </Link>
+    const question = await getQuestionById({ questionId: id });
 
-          <div className="flex w-full justify-end">VOTING</div>
-        </div>
+    const { author, title, createdAt, answers, views, description, tags } =
+        question;
 
-        <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
-          {title}
-        </h2>
+    return (
+        <>
+            <div className="flex-start w-full flex-col">
+                <div className="flex w-full flex-col-reverse gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+                    <Link
+                        href={`/profile/${author._id}`}
+                        className="flex w-full items-center justify-start gap-1"
+                    >
+                        <Image
+                            src={author.picture}
+                            width={22}
+                            height={22}
+                            alt="Author's profile picture"
+                            className="rounded-full"
+                        />
+                        <p className="paragraph-semibold text-dark300_light700">
+                            {author.name}
+                        </p>
+                    </Link>
 
-        <div className="mr-auto mt-5 flex flex-wrap gap-4">
-          <Metric
-            imgURL="/assets/icons/clock.svg"
-            alt="Clcok icon"
-            value={` asked ${getTimestamp(createdAt)}`}
-            title=""
-            otherClasses="small-regular text-dark400_light800"
-          />
-          <Metric
-            imgURL="/assets/icons/message.svg"
-            alt="Message"
-            value={formatNumber(answers.length)}
-            title="Answers"
-            otherClasses="small-regular text-dark400_light800"
-          />
-          <Metric
-            imgURL="/assets/icons/eye.svg"
-            alt="eye"
-            value={formatNumber(views)}
-            title="Views"
-            otherClasses="small-regular text-dark400_light800"
-          />
-        </div>
-      </div>
+                    <div className="flex w-full justify-end">VOTING</div>
+                </div>
 
-      <div className="mb-8 mt-5 flex flex-wrap gap-2">
-        {tags.map(({ name, _id }) => (
-          <Tag key={String(_id)} name={name} id={String(_id)} />
-        ))}
-      </div>
+                <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
+                    {title}
+                </h2>
 
-      <ParsedHTML data={description} />
+                <div className="mr-auto mt-5 flex flex-wrap gap-4">
+                    <Metric
+                        imgURL="/assets/icons/clock.svg"
+                        alt="Clcok icon"
+                        value={` asked ${getTimestamp(createdAt)}`}
+                        title=""
+                        otherClasses="small-regular text-dark400_light800"
+                    />
+                    <Metric
+                        imgURL="/assets/icons/message.svg"
+                        alt="Message"
+                        value={formatNumber(answers.length)}
+                        title="Answers"
+                        otherClasses="small-regular text-dark400_light800"
+                    />
+                    <Metric
+                        imgURL="/assets/icons/eye.svg"
+                        alt="eye"
+                        value={formatNumber(views)}
+                        title="Views"
+                        otherClasses="small-regular text-dark400_light800"
+                    />
+                </div>
+            </div>
 
-      <div className="mt-8">
-        <AnswerForm />
-      </div>
-    </>
-  );
+            <div className="mb-8 mt-5 flex flex-wrap gap-2">
+                {tags.map(({ name, _id }) => (
+                    <Tag key={String(_id)} name={name} id={String(_id)} />
+                ))}
+            </div>
+
+            <ParsedHTML data={description} />
+
+            <div className="mt-8">
+                <AnswerForm
+                    questionId={id}
+                    userId={JSON.stringify(mongoUser._id)}
+                />
+            </div>
+        </>
+    );
 };
 
 export default QuestionDetailsPage;

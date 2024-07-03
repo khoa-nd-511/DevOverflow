@@ -1,8 +1,11 @@
-import AnswerModel from "@/database/answer.model";
-import { connectToDB } from "../mongoose";
-import { ICreateAnswerParams } from "./shared.types";
+"use server";
+
 import { revalidatePath } from "next/cache";
+import AnswerModel from "@/database/answer.model";
 import QuestionModel from "@/database/question.model";
+
+import { ICreateAnswerParams } from "./shared.types";
+import { connectToDB } from "../mongoose";
 
 export async function createAnswer(params: ICreateAnswerParams) {
     try {
@@ -19,6 +22,8 @@ export async function createAnswer(params: ICreateAnswerParams) {
         await QuestionModel.findByIdAndUpdate(question, {
             $push: { answers: answer._id },
         });
+
+        answer.save();
 
         revalidatePath(pathname);
     } catch (error) {

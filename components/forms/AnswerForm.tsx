@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import Image from "next/image";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Editor } from "@tinymce/tinymce-react";
-
+import { Editor as TinyMCEEditor } from "tinymce";
 import {
     Form,
     FormControl,
@@ -15,13 +16,22 @@ import {
 } from "@/components/ui/form";
 import { answerFormSchema } from "@/lib/validations";
 import { useTheme } from "@/context/ThemeProvider";
-import { Button } from "../ui/button";
-import Image from "next/image";
+import { createAnswer } from "@/lib/actions/answer.action";
 
-const AnswerForm = () => {
+import { Button } from "../ui/button";
+import { usePathname } from "next/navigation";
+
+interface IAnswerFormProps {
+    questionId: string;
+    userId: string;
+}
+
+const AnswerForm = ({ questionId, userId }: IAnswerFormProps) => {
     const { mode } = useTheme();
 
-    const editorRef = useRef<Editor>();
+    const pathname = usePathname();
+
+    const editorRef = useRef<TinyMCEEditor>();
 
     const [submitting, setSubmitting] = useState(false);
 
@@ -32,7 +42,28 @@ const AnswerForm = () => {
         },
     });
 
-    const handleAnswerSubmit = () => {};
+    const handleAnswerSubmit = async ({
+        content,
+    }: z.infer<typeof answerFormSchema>) => {
+        setSubmitting(true);
+
+        try {
+            await createAnswer({
+                content,
+                question: questionId,
+                author: JSON.parse(userId),
+                pathname,
+            });
+
+            if (editorRef.current) {
+                editorRef.current.setContent("");
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
         <div className="mt-10">
@@ -122,7 +153,7 @@ const AnswerForm = () => {
 
                     <div className="flex justify-end">
                         <Button
-                            type="button"
+                            type="submit"
                             className="primary-gradient w-fit text-white"
                         >
                             {submitting ? "Submitting..." : "Submit"}
