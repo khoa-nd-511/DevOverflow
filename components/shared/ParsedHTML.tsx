@@ -27,15 +27,15 @@ import "prismjs/plugins/line-numbers/prism-line-numbers.js";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 
 interface IParsedHTMLProps {
-  data: string;
+    data: string;
 }
 
 const ParsedHTML = ({ data }: IParsedHTMLProps) => {
-  useEffect(() => {
-    Prism.highlightAll();
-  }, []);
+    useEffect(() => {
+        Prism.highlightAll();
+    }, []);
 
-  return <div>{parse(data)}</div>;
+    return <div>{parse(data)}</div>;
 };
 
 export default ParsedHTML;
