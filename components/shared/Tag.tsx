@@ -14,7 +14,7 @@ const Tag = (props: ITag) => {
     return (
         <div key={id} className="flex items-center justify-between">
             <Link
-                href="/"
+                href={`/tags/${id}`}
                 className="body-medium text-dark500_light700 font-normal"
             >
                 <Badge className="subtle-medium background-light800_dark300 text-dark400_light500 rounded-md border-none px-4 py-2 uppercase">

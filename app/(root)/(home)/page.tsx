@@ -40,7 +40,7 @@ const Home = async () => {
                         return (
                             <QuestionCard
                                 key={question._id as string}
-                                _id={question._id as string}
+                                id={question._id as string}
                                 answers={question.answers}
                                 author={question.author}
                                 createdAt={question.createdAt}

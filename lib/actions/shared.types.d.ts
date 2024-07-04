@@ -1,6 +1,9 @@
 import { Schema } from "mongoose";
 
 import { IUser } from "@/mongodb";
+import { IQuestionSchema } from "@/database/question.model";
+import { IUserSchema } from "@/database/user.model";
+import { ITagSchema } from "@/database/tag.model";
 
 // collapse(1:159)
 export interface ICreateAnswerParams {
@@ -159,3 +162,8 @@ export interface IGetUserStatsParams {
 export interface IDeleteUserParams {
     clerkId: string;
 }
+
+export type PopulatedQuestion = Omit<IQuestionSchema, "tags" | "author"> & {
+    author: Pick<IUserSchema, "_id" | "picture" | "name">;
+    tags: Pick<ITagSchema, "_id" | "name">[];
+};

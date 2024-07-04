@@ -1,7 +1,14 @@
 import UserModel from "@/database/user.model";
-import { connectToDB } from "../mongoose";
-import { IGetAllTagsParams, IGetTopInteractedTagsParams } from "./shared.types";
 import TagModel, { ITagSchema } from "@/database/tag.model";
+import QuestionModel from "@/database/question.model";
+
+import { connectToDB } from "../mongoose";
+import {
+    IGetAllTagsParams,
+    IGetQuestionsByTagIdParams,
+    IGetTopInteractedTagsParams,
+    PopulatedQuestion,
+} from "./shared.types";
 
 export async function getAllTags(params: IGetAllTagsParams) {
     try {
@@ -43,6 +50,48 @@ export async function getTopInteractedTags(
             `Unable to get top interacted tags for ${params.userId}`,
             error
         );
+        throw error;
+    }
+}
+
+export async function getTagById(params: IGetQuestionsByTagIdParams) {
+    try {
+        await connectToDB();
+
+        const { tagId, searchQuery } = params;
+
+        const tag = await TagModel.findById(tagId)
+            .populate<{ questions: PopulatedQuestion[] }>({
+                path: "questions",
+                match: searchQuery
+                    ? { title: { $regex: searchQuery, $option: "i" } }
+                    : {},
+                model: QuestionModel,
+                populate: [
+                    {
+                        path: "tags",
+                        select: "_id name",
+                        model: TagModel,
+                    },
+                    {
+                        path: "author",
+                        select: "_id name picture",
+                        model: UserModel,
+                    },
+                ],
+                options: {
+                    sort: {
+                        createdAt: -1,
+                    },
+                },
+            })
+            .sort({ createdAt: -1 });
+
+        if (!tag) throw new Error("Tag not found");
+
+        return tag;
+    } catch (error) {
+        console.error(`Unable to get tag's questions`, error);
         throw error;
     }
 }

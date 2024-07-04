@@ -8,7 +8,7 @@ import Tag from "../shared/Tag";
 import Metric from "../shared/Metric";
 
 interface IQuestionProps {
-    _id: string;
+    id: string;
     title: string;
     tags: Pick<ITagSchema, "_id" | "name">[];
     author: Pick<IUserSchema, "_id" | "picture" | "name">;
@@ -19,7 +19,7 @@ interface IQuestionProps {
 }
 
 const QuestionCard = ({
-    _id,
+    id,
     answers,
     author,
     createdAt,
@@ -28,6 +28,7 @@ const QuestionCard = ({
     upvotes,
     views,
 }: IQuestionProps) => {
+    console.log("createdAt", createdAt);
     return (
         <div className="card-wrapper rounded-lg p-9 sm:p-11">
             <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
@@ -36,7 +37,7 @@ const QuestionCard = ({
                         {getTimestamp(createdAt)}
                     </span>
 
-                    <Link href={`/question/${_id}`}>
+                    <Link href={`/question/${id}`}>
                         <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
                             {title}
                         </h3>
