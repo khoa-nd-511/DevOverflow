@@ -1,16 +1,16 @@
 import React from "react";
-import Link from "next/link";
-import Image from "next/image";
+import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 
+import { getQuestionById } from "@/lib/actions/question.action";
+import { formatNumber, getTimestamp } from "@/lib/utils";
+import { getUserById } from "@/lib/actions/user.action";
 import Metric from "@/components/shared/Metric";
 import ParsedHTML from "@/components/shared/ParsedHTML";
 import Tag from "@/components/shared/Tag";
-import { getQuestionById } from "@/lib/actions/question.action";
-import { formatNumber, getTimestamp } from "@/lib/utils";
 import AnswerForm from "@/components/forms/AnswerForm";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { getUserById } from "@/lib/actions/user.action";
+import AllAnswers from "@/components/shared/AllAnswers";
+import UserDisplay from "@/components/shared/UserDisplay";
 
 const QuestionDetailsPage = async ({
     params: { id },
@@ -34,21 +34,11 @@ const QuestionDetailsPage = async ({
         <>
             <div className="flex-start w-full flex-col">
                 <div className="flex w-full flex-col-reverse gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                    <Link
-                        href={`/profile/${author._id}`}
-                        className="flex w-full items-center justify-start gap-1"
-                    >
-                        <Image
-                            src={author.picture}
-                            width={22}
-                            height={22}
-                            alt="Author's profile picture"
-                            className="rounded-full"
-                        />
-                        <p className="paragraph-semibold text-dark300_light700">
-                            {author.name}
-                        </p>
-                    </Link>
+                    <UserDisplay
+                        id={String(author._id)}
+                        name={author.name}
+                        imgURL={author.picture}
+                    />
 
                     <div className="flex w-full justify-end">VOTING</div>
                 </div>
@@ -91,6 +81,10 @@ const QuestionDetailsPage = async ({
             <ParsedHTML data={description} />
 
             <div className="mt-10">
+                <AllAnswers questionId={id} userId={String(mongoUser._id)} />
+            </div>
+
+            <div className="mt-20">
                 <AnswerForm questionId={id} userId={String(mongoUser._id)} />
             </div>
         </>

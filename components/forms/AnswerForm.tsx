@@ -51,13 +51,15 @@ const AnswerForm = ({ questionId, userId }: IAnswerFormProps) => {
             await createAnswer({
                 content,
                 question: questionId,
-                author: JSON.parse(userId),
+                author: userId,
                 pathname,
             });
 
             if (editorRef.current) {
                 editorRef.current.setContent("");
             }
+
+            form.clearErrors("content");
         } catch (error) {
             console.error(error);
         } finally {
@@ -66,7 +68,7 @@ const AnswerForm = ({ questionId, userId }: IAnswerFormProps) => {
     };
 
     return (
-        <div className="mt-10">
+        <>
             <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
                 <h4 className="paragraph-semibold text-dark400_light800">
                     Write your answer here
@@ -161,7 +163,7 @@ const AnswerForm = ({ questionId, userId }: IAnswerFormProps) => {
                     </div>
                 </form>
             </Form>
-        </div>
+        </>
     );
 };
 
