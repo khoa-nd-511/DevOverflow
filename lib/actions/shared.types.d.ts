@@ -18,10 +18,10 @@ export interface IGetAnswersParams {
 }
 
 export interface IAnswerVoteParams {
-    answerId: string;
+    id: string;
     userId: string;
-    hasupVoted: boolean;
-    hasdownVoted: boolean;
+    hasUpvoted: boolean;
+    hasDownvoted: boolean;
     pathname: string;
 }
 
@@ -72,7 +72,7 @@ export interface IGetQuestionByIdParams {
 }
 
 export interface IQuestionVoteParams {
-    questionId: string;
+    id: string;
     userId: string;
     hasUpvoted: boolean;
     hasDownvoted: boolean;
@@ -137,7 +137,7 @@ export interface IUpdateUserParams {
 
 export interface IToggleSaveQuestionParams {
     userId: string;
-    questionId: string;
+    id: string;
     pathname: string;
     hasSaved: boolean;
 }

@@ -14,7 +14,8 @@ import {
     IToggleSaveQuestionParams,
 } from "./shared.types";
 import { connectToDB } from "../mongoose";
-import { UpdateQuery } from "mongoose";
+import { FilterQuery, UpdateQuery } from "mongoose";
+import { redirect } from "next/navigation";
 
 export async function getQuestions(params: IGetQuestionsParams) {
     try {
@@ -46,11 +47,16 @@ export async function getSavedQuestions(params: IGetSavedQuestionsParams) {
     try {
         await connectToDB();
 
-        const { clerkId } = params;
+        const { clerkId, searchQuery } = params;
+
+        const query: FilterQuery<typeof QuestionModel> = searchQuery
+            ? { title: { $regex: new RegExp(searchQuery, "i") } }
+            : {};
 
         const user = await UserModel.findOne({ clerkId })
             .populate<{ saved: SavedQuestion[] }>({
                 path: "saved",
+                match: query,
                 model: QuestionModel,
                 populate: [
                     {
@@ -101,7 +107,7 @@ export async function getQuestionById(params: IGetQuestionByIdParams) {
             });
 
         if (!question) {
-            throw new Error("Unable to find question" + questionId);
+            return redirect("/");
         }
 
         return question;
@@ -154,8 +160,7 @@ export async function upvoteQuestion(params: IQuestionVoteParams) {
     try {
         await connectToDB();
 
-        const { hasDownvoted, hasUpvoted, pathname, questionId, userId } =
-            params;
+        const { hasDownvoted, hasUpvoted, pathname, id, userId } = params;
 
         const updates: UpdateQuery<IQuestionSchema> = {};
 
@@ -168,11 +173,9 @@ export async function upvoteQuestion(params: IQuestionVoteParams) {
             updates.$addToSet = { upvotes: userId };
         }
 
-        const question = await QuestionModel.findByIdAndUpdate(
-            questionId,
-            updates,
-            { new: true }
-        );
+        const question = await QuestionModel.findByIdAndUpdate(id, updates, {
+            new: true,
+        });
 
         if (!question) throw new Error("Question not found");
 
@@ -187,8 +190,7 @@ export async function downvoteQuestion(params: IQuestionVoteParams) {
     try {
         await connectToDB();
 
-        const { hasDownvoted, hasUpvoted, pathname, questionId, userId } =
-            params;
+        const { hasDownvoted, hasUpvoted, pathname, id, userId } = params;
 
         const updates: UpdateQuery<IQuestionSchema> = {};
 
@@ -201,11 +203,9 @@ export async function downvoteQuestion(params: IQuestionVoteParams) {
             updates.$addToSet = { downvotes: userId };
         }
 
-        const question = await QuestionModel.findByIdAndUpdate(
-            questionId,
-            updates,
-            { new: true }
-        );
+        const question = await QuestionModel.findByIdAndUpdate(id, updates, {
+            new: true,
+        });
 
         if (!question) throw new Error("Question not found");
 
@@ -220,9 +220,9 @@ export async function saveQuestion(params: IToggleSaveQuestionParams) {
     try {
         await connectToDB();
 
-        const { pathname, questionId, userId, hasSaved } = params;
+        const { pathname, id, userId, hasSaved } = params;
 
-        const question = await QuestionModel.findById(questionId);
+        const question = await QuestionModel.findById(id);
 
         if (!question) throw new Error("Question not found");
 

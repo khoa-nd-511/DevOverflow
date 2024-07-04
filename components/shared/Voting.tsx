@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +12,7 @@ import {
     saveQuestion,
     upvoteQuestion,
 } from "@/lib/actions/question.action";
-import { usePathname } from "next/navigation";
+import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
 
 const noop = () => {};
 
@@ -22,8 +23,8 @@ const apiMap = {
         save: saveQuestion,
     },
     answer: {
-        upvote: noop,
-        downvote: noop,
+        upvote: upvoteAnswer,
+        downvote: downvoteAnswer,
         save: noop,
     },
 } as const;
@@ -39,7 +40,7 @@ interface IVotingProps {
     downvotes: number;
     hasUpvoted: boolean;
     hasDownvoted: boolean;
-    hasSaved: boolean;
+    hasSaved?: boolean;
 }
 
 const Voting = ({
@@ -49,7 +50,7 @@ const Voting = ({
     downvotes,
     upvotes,
     hasDownvoted,
-    hasSaved,
+    hasSaved = false,
     hasUpvoted,
 }: IVotingProps) => {
     const pathname = usePathname();
@@ -63,12 +64,12 @@ const Voting = ({
             const api = apiMap[type][action];
 
             await api({
+                id,
+                userId,
                 hasDownvoted,
                 hasUpvoted,
                 hasSaved,
                 pathname,
-                questionId: id,
-                userId,
             });
         } catch (error) {
             console.log(error);
@@ -94,7 +95,7 @@ const Voting = ({
                     height={18}
                     alt="Upvote"
                 />
-                <Badge className="btn rounded-md">
+                <Badge className="btn text-dark100_light900 rounded-md">
                     {formatNumber(upvotes)}
                 </Badge>
             </Button>
@@ -113,26 +114,28 @@ const Voting = ({
                     height={18}
                     alt="Downvote"
                 />
-                <Badge className="btn rounded-md">
+                <Badge className="btn text-dark100_light900 rounded-md">
                     {formatNumber(downvotes)}
                 </Badge>
             </Button>
-            <Button
-                className="p-0 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100"
-                disabled={voting}
-                onClick={handleVote("save")}
-            >
-                <Image
-                    src={
-                        hasSaved
-                            ? "/assets/icons/star-filled.svg"
-                            : "/assets/icons/star-red.svg"
-                    }
-                    width={18}
-                    height={18}
-                    alt="Star"
-                />
-            </Button>
+            {type === "question" && (
+                <Button
+                    className="p-0 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100"
+                    disabled={voting}
+                    onClick={handleVote("save")}
+                >
+                    <Image
+                        src={
+                            hasSaved
+                                ? "/assets/icons/star-filled.svg"
+                                : "/assets/icons/star-red.svg"
+                        }
+                        width={18}
+                        height={18}
+                        alt="Star"
+                    />
+                </Button>
+            )}
         </div>
     );
 };

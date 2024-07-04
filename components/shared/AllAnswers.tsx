@@ -7,6 +7,8 @@ import { Separator } from "@/components/ui/separator";
 import Filter from "./Filter";
 import ParsedHTML from "./ParsedHTML";
 import UserDisplay from "./UserDisplay";
+import Voting from "./Voting";
+import { Schema } from "mongoose";
 
 interface IAllAnswersProps {
     questionId: string;
@@ -15,7 +17,7 @@ interface IAllAnswersProps {
     filter?: number;
 }
 
-const AllAnswers = async ({ questionId }: IAllAnswersProps) => {
+const AllAnswers = async ({ questionId, userId }: IAllAnswersProps) => {
     const answers = await getAnswersByQuestionId({ questionId });
 
     const totalAnswers = answers.length;
@@ -31,30 +33,54 @@ const AllAnswers = async ({ questionId }: IAllAnswersProps) => {
             </div>
 
             <div className="flex flex-col gap-5">
-                {answers.map(({ _id, content, author, createdAt }, index) => (
-                    <div key={String(_id)}>
-                        <UserDisplay
-                            id={String(author._id)}
-                            name={
-                                <div className="flex items-center gap-1">
-                                    <p className="paragraph-semibold text-dark300_light700">
-                                        {author.name}
-                                    </p>
-                                    <span className="small-regular text-dark400_light500 line-clamp-1">
-                                        - answered {getTimestamp(createdAt)}
-                                    </span>
-                                </div>
-                            }
-                            imgURL={author.picture}
-                        />
-                        <div className="text-dark200_light900 mt-4 pl-2">
-                            <ParsedHTML key={String(_id)} data={content} />
+                {answers.map(
+                    (
+                        { _id, content, author, createdAt, upvotes, downvotes },
+                        index
+                    ) => (
+                        <div key={String(_id)}>
+                            <div className="flex items-center justify-between">
+                                <UserDisplay
+                                    id={String(author._id)}
+                                    name={
+                                        <div className="flex items-center gap-1">
+                                            <p className="paragraph-semibold text-dark300_light700">
+                                                {author.name}
+                                            </p>
+                                            <span className="small-regular text-dark400_light500 line-clamp-1">
+                                                - answered{" "}
+                                                {getTimestamp(createdAt)}
+                                            </span>
+                                        </div>
+                                    }
+                                    imgURL={author.picture}
+                                />
+
+                                <Voting
+                                    id={String(_id)}
+                                    userId={userId}
+                                    type="answer"
+                                    upvotes={upvotes.length}
+                                    downvotes={downvotes.length}
+                                    hasUpvoted={upvotes.includes(
+                                        userId as unknown as Schema.Types.ObjectId
+                                    )}
+                                    hasDownvoted={downvotes.includes(
+                                        userId as unknown as Schema.Types.ObjectId
+                                    )}
+                                />
+                            </div>
+
+                            <div className="text-dark200_light900 mt-4 pl-2">
+                                <ParsedHTML key={String(_id)} data={content} />
+                            </div>
+
+                            {index < answers.length - 1 && (
+                                <Separator className="mb-5 mt-10 h-0.5 bg-light-700 dark:bg-dark-400" />
+                            )}
                         </div>
-                        {index < answers.length - 1 && (
-                            <Separator className="mb-5 mt-10 h-0.5 bg-light-700 dark:bg-dark-400" />
-                        )}
-                    </div>
-                ))}
+                    )
+                )}
             </div>
         </div>
     );
