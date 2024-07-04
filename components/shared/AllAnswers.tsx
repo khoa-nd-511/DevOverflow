@@ -1,5 +1,6 @@
 import React from "react";
 import { getAnswersByQuestionId } from "@/lib/actions/answer.action";
+import { getTimestamp } from "@/lib/utils";
 import { AnswerFilters } from "@/constants/filters";
 import { Separator } from "@/components/ui/separator";
 
@@ -30,11 +31,20 @@ const AllAnswers = async ({ questionId }: IAllAnswersProps) => {
             </div>
 
             <div className="flex flex-col gap-5">
-                {answers.map(({ _id, content, author }, index) => (
+                {answers.map(({ _id, content, author, createdAt }, index) => (
                     <div key={String(_id)}>
                         <UserDisplay
                             id={String(author._id)}
-                            name={author.name}
+                            name={
+                                <div className="flex items-center gap-1">
+                                    <p className="paragraph-semibold text-dark300_light700">
+                                        {author.name}
+                                    </p>
+                                    <span className="small-regular text-dark400_light500 line-clamp-1">
+                                        - answered {getTimestamp(createdAt)}
+                                    </span>
+                                </div>
+                            }
                             imgURL={author.picture}
                         />
                         <div className="text-dark200_light900 mt-4 pl-2">
