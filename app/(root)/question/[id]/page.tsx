@@ -11,6 +11,8 @@ import Tag from "@/components/shared/Tag";
 import AnswerForm from "@/components/forms/AnswerForm";
 import AllAnswers from "@/components/shared/AllAnswers";
 import UserDisplay from "@/components/shared/UserDisplay";
+import Voting from "@/components/shared/Voting";
+import { Schema } from "mongoose";
 
 const QuestionDetailsPage = async ({
     params: { id },
@@ -27,8 +29,17 @@ const QuestionDetailsPage = async ({
 
     const question = await getQuestionById({ questionId: id });
 
-    const { author, title, createdAt, answers, views, description, tags } =
-        question;
+    const {
+        author,
+        title,
+        createdAt,
+        answers,
+        views,
+        description,
+        tags,
+        upvotes,
+        downvotes,
+    } = question;
 
     return (
         <>
@@ -40,7 +51,33 @@ const QuestionDetailsPage = async ({
                         imgURL={author.picture}
                     />
 
-                    <div className="flex w-full justify-end">VOTING</div>
+                    <div className="flex w-full justify-end">
+                        <Voting
+                            id={id}
+                            userId={String(mongoUser._id)}
+                            type="question"
+                            upvotes={upvotes.length}
+                            downvotes={downvotes.length}
+                            hasUpvoted={
+                                mongoUser &&
+                                upvotes.includes(
+                                    mongoUser._id as Schema.Types.ObjectId
+                                )
+                            }
+                            hasDownvoted={
+                                mongoUser &&
+                                downvotes.includes(
+                                    mongoUser._id as Schema.Types.ObjectId
+                                )
+                            }
+                            hasSaved={
+                                mongoUser &&
+                                mongoUser.saved.includes(
+                                    question._id as Schema.Types.ObjectId
+                                )
+                            }
+                        />
+                    </div>
                 </div>
 
                 <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
