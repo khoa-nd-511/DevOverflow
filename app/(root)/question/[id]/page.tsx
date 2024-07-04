@@ -90,11 +90,8 @@ const QuestionDetailsPage = async ({
 
             <ParsedHTML data={description} />
 
-            <div className="mt-8">
-                <AnswerForm
-                    questionId={id}
-                    userId={JSON.stringify(mongoUser._id)}
-                />
+            <div className="mt-10">
+                <AnswerForm questionId={id} userId={String(mongoUser._id)} />
             </div>
         </>
     );

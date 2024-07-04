@@ -32,7 +32,7 @@ const LeftSidebar = () => {
                                 className={`${isActive ? "" : "invert-colors"}`}
                             />
                             <p
-                                className={`${isActive ? "base-bold" : "base-medium"} max-lg:hidden`}
+                                className={`${isActive ? "base-bold" : "base-medium"} line-clamp-1 max-lg:hidden`}
                             >
                                 {label}
                             </p>
