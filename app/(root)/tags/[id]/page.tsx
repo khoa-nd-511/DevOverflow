@@ -1,4 +1,6 @@
 import QuestionCard from "@/components/cards/QuestionCard";
+import CTAButton from "@/components/shared/CTAButton";
+import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { getTagById } from "@/lib/actions/tag.action";
 import React from "react";
@@ -23,19 +25,37 @@ const TagDetailsPage = async ({
             </div>
 
             <div className="mt-10 flex w-full flex-col gap-6">
-                {questions.map((question) => (
-                    <QuestionCard
-                        key={question._id as string}
-                        id={question._id as string}
-                        answers={question.answers}
-                        author={question.author}
-                        createdAt={question.createdAt}
-                        tags={question.tags}
-                        title={question.title}
-                        upvotes={question.upvotes.length}
-                        views={question.views}
+                {questions.length > 0 ? (
+                    questions.map((question) => {
+                        return (
+                            <QuestionCard
+                                key={question._id as string}
+                                id={question._id as string}
+                                answers={question.answers}
+                                author={question.author}
+                                createdAt={question.createdAt}
+                                tags={question.tags}
+                                title={question.title}
+                                upvotes={question.upvotes.length}
+                                views={question.views}
+                            />
+                        );
+                    })
+                ) : (
+                    <NoResults
+                        title="There's no questions related to this tag"
+                        description="Be the first to break the silence! 🚀 Ask a Question and kickstart the
+        discussion. our query could be the next big thing others learn from. Get
+        involved! 💡"
+                        cta={
+                            <CTAButton
+                                label="Ask a question"
+                                href="/ask-question"
+                                otherClasses="mt-5"
+                            />
+                        }
                     />
-                ))}
+                )}
             </div>
         </div>
     );
