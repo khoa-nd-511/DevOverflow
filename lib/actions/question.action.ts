@@ -46,9 +46,9 @@ export async function getSavedQuestions(params: IGetSavedQuestionsParams) {
     try {
         await connectToDB();
 
-        const { userId } = params;
+        const { clerkId } = params;
 
-        const user = await UserModel.findById(userId)
+        const user = await UserModel.findOne({ clerkId })
             .populate<{ saved: SavedQuestion[] }>({
                 path: "saved",
                 model: QuestionModel,
@@ -64,6 +64,11 @@ export async function getSavedQuestions(params: IGetSavedQuestionsParams) {
                         model: UserModel,
                     },
                 ],
+                options: {
+                    sort: {
+                        createdAt: -1,
+                    },
+                },
             })
             .sort({ createdAt: -1 });
 

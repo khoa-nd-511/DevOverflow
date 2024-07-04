@@ -143,7 +143,7 @@ export interface IToggleSaveQuestionParams {
 }
 
 export interface IGetSavedQuestionsParams {
-    userId: string;
+    clerkId: string;
     page?: number;
     pageSize?: number;
     filter?: string;

@@ -9,19 +9,14 @@ import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import QuestionCard from "@/components/cards/QuestionCard";
 import CTAButton from "@/components/shared/CTAButton";
-import { getUserById } from "@/lib/actions/user.action";
 import { getSavedQuestions } from "@/lib/actions/question.action";
 
 const CollectionPage = async () => {
-    const { userId } = auth();
+    const { userId: clerkId } = auth();
 
-    if (!userId) redirect("/sign-in");
+    if (!clerkId) redirect("/sign-in");
 
-    const mongoUser = await getUserById({ userId });
-
-    const questions = await getSavedQuestions({
-        userId: String(mongoUser._id),
-    });
+    const questions = await getSavedQuestions({ clerkId });
 
     return (
         <>
