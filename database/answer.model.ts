@@ -6,7 +6,7 @@ export interface IAnswerSchema extends Document {
     question: Schema.Types.ObjectId;
     upvotes: Schema.Types.ObjectId[];
     downvotes: Schema.Types.ObjectId[];
-    created: Date;
+    createdAt: Date;
     updatedAt: Date;
 }
 
