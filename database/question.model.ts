@@ -1,11 +1,4 @@
-import {
-    Document,
-    InferSchemaType,
-    Model,
-    Schema,
-    model,
-    models,
-} from "mongoose";
+import { Document, Model, Schema, model, models } from "mongoose";
 
 export interface IQuestionSchema extends Document {
     title: string;
@@ -36,7 +29,5 @@ const QuestionSchema = new Schema<IQuestionSchema>(
 
 const QuestionModel: Model<IQuestionSchema> =
     models.Question || model("Question", QuestionSchema);
-
-export type IQuestion = InferSchemaType<typeof QuestionSchema>;
 
 export default QuestionModel;

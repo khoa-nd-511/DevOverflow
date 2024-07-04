@@ -1,22 +1,33 @@
 import React from "react";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
+import { HomePageFilters } from "@/constants/filters";
 import HomeFilters from "@/components/home/HomeFilters";
 import Filter from "@/components/shared/Filter";
 import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
-import { HomePageFilters } from "@/constants/filters";
 import QuestionCard from "@/components/cards/QuestionCard";
 import CTAButton from "@/components/shared/CTAButton";
-import { getQuestions } from "@/lib/actions/question.action";
+import { getUserById } from "@/lib/actions/user.action";
+import { getSavedQuestions } from "@/lib/actions/question.action";
 
-const Home = async () => {
-    const { questions } = await getQuestions({});
+const CollectionPage = async () => {
+    const { userId } = auth();
+
+    if (!userId) redirect("/sign-in");
+
+    const mongoUser = await getUserById({ userId });
+
+    const questions = await getSavedQuestions({
+        userId: String(mongoUser._id),
+    });
 
     return (
         <>
             <div className="flex w-full flex-col-reverse justify-between sm:flex-row">
                 <h1 className="h1-bold text-dark100_light900 max-sm:mt-6">
-                    All Questions
+                    Saved Questions
                 </h1>
 
                 <CTAButton label="Ask a question" href="/ask-question" />
@@ -71,4 +82,4 @@ const Home = async () => {
     );
 };
 
-export default Home;
+export default CollectionPage;

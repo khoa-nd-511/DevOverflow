@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 
-import QuestionModel from "@/database/question.model";
+import QuestionModel, { IQuestionSchema } from "@/database/question.model";
 import TagModel, { ITagSchema } from "@/database/tag.model";
 import UserModel, { IUserSchema } from "@/database/user.model";
 
@@ -9,8 +9,12 @@ import {
     ICreateQuestionParams,
     IGetQuestionByIdParams,
     IGetQuestionsParams,
+    IGetSavedQuestionsParams,
+    IQuestionVoteParams,
+    IToggleSaveQuestionParams,
 } from "./shared.types";
 import { connectToDB } from "../mongoose";
+import { UpdateQuery } from "mongoose";
 
 export async function getQuestions(params: IGetQuestionsParams) {
     try {
@@ -27,6 +31,45 @@ export async function getQuestions(params: IGetQuestionsParams) {
             .sort({ createdAt: -1 });
 
         return { questions };
+    } catch (error) {
+        console.error("Unable to get questions", error);
+        throw error;
+    }
+}
+
+type SavedQuestion = Omit<IQuestionSchema, "tags" | "author"> & {
+    author: Pick<IUserSchema, "_id" | "picture" | "name">;
+    tags: Pick<ITagSchema, "_id" | "name">[];
+};
+
+export async function getSavedQuestions(params: IGetSavedQuestionsParams) {
+    try {
+        await connectToDB();
+
+        const { userId } = params;
+
+        const user = await UserModel.findById(userId)
+            .populate<{ saved: SavedQuestion[] }>({
+                path: "saved",
+                model: QuestionModel,
+                populate: [
+                    {
+                        path: "tags",
+                        select: "_id name",
+                        model: TagModel,
+                    },
+                    {
+                        path: "author",
+                        select: "_id name picture",
+                        model: UserModel,
+                    },
+                ],
+            })
+            .sort({ createdAt: -1 });
+
+        if (!user) throw new Error("User not found");
+
+        return user.saved;
     } catch (error) {
         console.error("Unable to get questions", error);
         throw error;
@@ -98,6 +141,103 @@ export async function createQuestion(params: ICreateQuestionParams) {
         revalidatePath(pathname);
     } catch (error) {
         console.error("Unable to create question", error);
+        throw error;
+    }
+}
+
+export async function upvoteQuestion(params: IQuestionVoteParams) {
+    try {
+        await connectToDB();
+
+        const { hasDownvoted, hasUpvoted, pathname, questionId, userId } =
+            params;
+
+        const updates: UpdateQuery<IQuestionSchema> = {};
+
+        if (hasUpvoted) {
+            updates.$pull = { upvotes: userId };
+        } else if (hasDownvoted) {
+            updates.$push = { upvotes: userId };
+            updates.$pull = { downvotes: userId };
+        } else {
+            updates.$addToSet = { upvotes: userId };
+        }
+
+        const question = await QuestionModel.findByIdAndUpdate(
+            questionId,
+            updates,
+            { new: true }
+        );
+
+        if (!question) throw new Error("Question not found");
+
+        revalidatePath(pathname);
+    } catch (error) {
+        console.log("Unable to upvote question", error);
+        throw error;
+    }
+}
+
+export async function downvoteQuestion(params: IQuestionVoteParams) {
+    try {
+        await connectToDB();
+
+        const { hasDownvoted, hasUpvoted, pathname, questionId, userId } =
+            params;
+
+        const updates: UpdateQuery<IQuestionSchema> = {};
+
+        if (hasDownvoted) {
+            updates.$pull = { downvotes: userId };
+        } else if (hasUpvoted) {
+            updates.$pull = { upvotes: userId };
+            updates.$push = { downvotes: userId };
+        } else {
+            updates.$addToSet = { downvotes: userId };
+        }
+
+        const question = await QuestionModel.findByIdAndUpdate(
+            questionId,
+            updates,
+            { new: true }
+        );
+
+        if (!question) throw new Error("Question not found");
+
+        revalidatePath(pathname);
+    } catch (error) {
+        console.log("Unable to downvote question", error);
+        throw error;
+    }
+}
+
+export async function saveQuestion(params: IToggleSaveQuestionParams) {
+    try {
+        await connectToDB();
+
+        const { pathname, questionId, userId, hasSaved } = params;
+
+        const question = await QuestionModel.findById(questionId);
+
+        if (!question) throw new Error("Question not found");
+
+        const updates: UpdateQuery<IUserSchema> = {};
+
+        if (hasSaved) {
+            updates.$pull = { saved: question._id };
+        } else {
+            updates.$push = { saved: question._id };
+        }
+
+        const user = await UserModel.findByIdAndUpdate(userId, updates, {
+            new: true,
+        });
+
+        if (!user) throw new Error("User not found");
+
+        revalidatePath(pathname);
+    } catch (error) {
+        console.log("Unable to save question", error);
         throw error;
     }
 }

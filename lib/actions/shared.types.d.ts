@@ -74,8 +74,8 @@ export interface IGetQuestionByIdParams {
 export interface IQuestionVoteParams {
     questionId: string;
     userId: string;
-    hasupVoted: boolean;
-    hasdownVoted: boolean;
+    hasUpvoted: boolean;
+    hasDownvoted: boolean;
     pathname: string;
 }
 
@@ -139,10 +139,11 @@ export interface IToggleSaveQuestionParams {
     userId: string;
     questionId: string;
     pathname: string;
+    hasSaved: boolean;
 }
 
 export interface IGetSavedQuestionsParams {
-    clerkId: string;
+    userId: string;
     page?: number;
     pageSize?: number;
     filter?: string;
