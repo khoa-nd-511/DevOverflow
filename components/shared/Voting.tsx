@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
@@ -13,6 +13,7 @@ import {
     upvoteQuestion,
 } from "@/lib/actions/question.action";
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
+import { viewQuestion } from "@/lib/actions/interaction.action";
 
 const noop = () => {};
 
@@ -56,6 +57,19 @@ const Voting = ({
     const pathname = usePathname();
 
     const [voting, setVoting] = useState(false);
+
+    const voteRef = useRef(false);
+
+    useEffect(() => {
+        if (voteRef.current) return;
+        if (type === "question") {
+            voteRef.current = true;
+            viewQuestion({
+                userId,
+                questionId: id,
+            });
+        }
+    }, [type, id, userId]);
 
     const handleVote = (action: VotingAction) => async () => {
         if (voting) return;
