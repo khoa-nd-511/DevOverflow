@@ -1,6 +1,8 @@
 "use server";
 
+import { UpdateQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
+
 import AnswerModel, { IAnswerSchema } from "@/database/answer.model";
 import QuestionModel from "@/database/question.model";
 
@@ -8,10 +10,9 @@ import {
     IAnswerVoteParams,
     ICreateAnswerParams,
     IGetAnswersParams,
+    PopulatedUser,
 } from "./shared.types";
 import { connectToDB } from "../mongoose";
-import { IUserSchema } from "@/database/user.model";
-import { UpdateQuery } from "mongoose";
 
 export async function getAnswersByQuestionId(params: IGetAnswersParams) {
     try {
@@ -24,8 +25,8 @@ export async function getAnswersByQuestionId(params: IGetAnswersParams) {
                 createdAt: -1,
             })
             .populate<{
-                author: Pick<IUserSchema, "_id" | "name" | "picture">;
-            }>({ path: "author", select: "_id name picture" });
+                author: PopulatedUser;
+            }>({ path: "author", select: "_id clerkId name picture" });
 
         return answers;
     } catch (error) {

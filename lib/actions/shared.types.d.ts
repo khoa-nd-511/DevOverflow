@@ -163,7 +163,13 @@ export interface IDeleteUserParams {
     clerkId: string;
 }
 
+export type PopulatedTag = Pick<ITagSchema, "_id" | "name">;
+export type PopulatedUser = Pick<
+    IUserSchema,
+    "_id" | "picture" | "name" | "clerkId"
+>;
 export type PopulatedQuestion = Omit<IQuestionSchema, "tags" | "author"> & {
-    author: Pick<IUserSchema, "_id" | "picture" | "name">;
-    tags: Pick<ITagSchema, "_id" | "name">[];
+    author: PopulatedUser;
+    tags: PopulatedTag[];
 };
+export type PopulatedQuestionCompact = Pick<IQuestionSchema, "_id" | "title">;

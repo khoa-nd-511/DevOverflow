@@ -1,8 +1,8 @@
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
+
 import { formatNumber, getTimestamp } from "@/lib/utils";
-import { IUserSchema } from "@/database/user.model";
-import { ITagSchema } from "@/database/tag.model";
+import { PopulatedTag, PopulatedUser } from "@/lib/actions/shared.types";
 
 import Tag from "../shared/Tag";
 import Metric from "../shared/Metric";
@@ -10,8 +10,8 @@ import Metric from "../shared/Metric";
 interface IQuestionProps {
     id: string;
     title: string;
-    tags: Pick<ITagSchema, "_id" | "name">[];
-    author: Pick<IUserSchema, "_id" | "picture" | "name">;
+    tags: PopulatedTag[];
+    author: PopulatedUser;
     upvotes: number;
     views: number;
     answers: Array<object>;
@@ -28,7 +28,6 @@ const QuestionCard = ({
     upvotes,
     views,
 }: IQuestionProps) => {
-    console.log("createdAt", createdAt);
     return (
         <div className="card-wrapper rounded-lg p-9 sm:p-11">
             <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">

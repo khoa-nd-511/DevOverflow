@@ -75,7 +75,7 @@ export async function getTagById(params: IGetQuestionsByTagIdParams) {
                     },
                     {
                         path: "author",
-                        select: "_id name picture",
+                        select: "_id clerkId name picture",
                         model: UserModel,
                     },
                 ],

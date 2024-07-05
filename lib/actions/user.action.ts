@@ -1,15 +1,21 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import UserModel from "@/database/user.model";
-import { connectToDB } from "../mongoose";
+import QuestionModel from "@/database/question.model";
+import AnswerModel from "@/database/answer.model";
 import {
     ICreateUserParams,
     IDeleteUserParams,
     IGetAllUsersParams,
+    IGetUserByIdParams,
+    IGetUserStatsParams,
     IUpdateUserParams,
+    PopulatedQuestionCompact,
+    PopulatedTag,
+    PopulatedUser,
 } from "./shared.types";
-import { revalidatePath } from "next/cache";
-import QuestionModel from "@/database/question.model";
+import { connectToDB } from "../mongoose";
 
 export async function getAllUsers(params: IGetAllUsersParams) {
     try {
@@ -40,6 +46,99 @@ export async function getUserById(params: any) {
         return user;
     } catch (error) {
         console.error("unable to find user with id", userId);
+        throw error;
+    }
+}
+
+export async function getUserInfo(params: IGetUserByIdParams) {
+    const { userId } = params;
+    try {
+        await connectToDB();
+
+        const user = await UserModel.findOne({ userId });
+
+        if (!user) {
+            throw new Error("User not found" + userId);
+        }
+
+        const [totalQuestions, totalAnswers] = await Promise.all([
+            QuestionModel.countDocuments({
+                author: user._id,
+            }),
+            AnswerModel.countDocuments({
+                author: user._id,
+            }),
+        ]);
+
+        return { user, totalAnswers, totalQuestions };
+    } catch (error) {
+        console.error("unable to find user info", userId);
+        throw error;
+    }
+}
+
+export async function getUserQuestions(params: IGetUserStatsParams) {
+    const { userId, page = 1, pageSize = 10 } = params;
+    try {
+        await connectToDB();
+
+        const user = await UserModel.findOne({ userId });
+
+        if (!user) {
+            throw new Error("User not found" + userId);
+        }
+
+        const totalQuestions = await QuestionModel.countDocuments({
+            author: userId,
+        });
+
+        const userQuestions = await QuestionModel.find({ author: userId })
+            .sort({ views: -1, upvotes: -1 })
+            .skip((page - 1) * pageSize)
+            .populate<{ tags: PopulatedTag[] }>("tags", "_id name")
+            .populate<{
+                author: PopulatedUser;
+            }>("author", "_id clerkId name picture");
+
+        return { totalQuestions, userQuestions };
+    } catch (error) {
+        console.error("unable to find user questions", userId);
+        throw error;
+    }
+}
+
+export async function getUserAnswers(params: IGetUserStatsParams) {
+    const { userId, page = 1, pageSize = 10 } = params;
+    try {
+        await connectToDB();
+
+        const user = await UserModel.findOne({ userId });
+
+        if (!user) {
+            throw new Error("User not found" + userId);
+        }
+
+        const [totalAnswers, userAnswers] = await Promise.all([
+            AnswerModel.countDocuments({
+                author: userId,
+            }),
+            AnswerModel.find({ author: userId })
+                .sort({ upvotes: -1 })
+                .skip((page - 1) * pageSize)
+                .populate<{
+                    author: PopulatedUser;
+                }>("author", "_id clerkId name picture")
+                .populate<{ question: PopulatedQuestionCompact }>(
+                    "question",
+                    "_id title"
+                ),
+        ]);
+
+        console.log({ totalAnswers, userAnswers });
+
+        return { totalAnswers, userAnswers };
+    } catch (error) {
+        console.error("unable to find user answers", userId);
         throw error;
     }
 }

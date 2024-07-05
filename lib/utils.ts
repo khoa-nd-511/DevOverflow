@@ -38,3 +38,14 @@ export function formatNumber(num: number): string {
     }
     return num.toString();
 }
+
+export function getJoinedDate(date: Date) {
+    if (!(date instanceof Date)) {
+        throw new Error("Invalid input: expected a Date object");
+    }
+
+    const month = date.toLocaleString("default", { month: "long" });
+    const year = date.getFullYear();
+
+    return `${month} ${year}`;
+}

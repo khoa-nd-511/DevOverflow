@@ -12,7 +12,7 @@ export interface IUserSchema extends Document {
     website?: string;
     reputation?: number;
     saved: Schema.Types.ObjectId[];
-    createdAt: Date;
+    joinedAt: Date;
     updatedAt: Date;
 }
 
@@ -29,6 +29,7 @@ const UserSchema: Schema = new Schema<IUserSchema>(
         website: { type: String },
         reputation: { type: Number, default: 0 },
         saved: [{ type: Schema.Types.ObjectId, ref: "Question" }],
+        joinedAt: { type: Date, default: Date.now },
     },
     { timestamps: true }
 );

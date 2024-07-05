@@ -13,6 +13,8 @@ import {
     IQuestionVoteParams,
     IToggleSaveQuestionParams,
     PopulatedQuestion,
+    PopulatedTag,
+    PopulatedUser,
 } from "./shared.types";
 import { connectToDB } from "../mongoose";
 import { FilterQuery, UpdateQuery } from "mongoose";
@@ -62,7 +64,7 @@ export async function getSavedQuestions(params: IGetSavedQuestionsParams) {
                     },
                     {
                         path: "author",
-                        select: "_id name picture",
+                        select: "_id clerkId name picture",
                         model: UserModel,
                     },
                 ],
@@ -89,13 +91,13 @@ export async function getQuestionById(params: IGetQuestionByIdParams) {
         await connectToDB();
 
         const question = await QuestionModel.findById(questionId)
-            .populate<{ tags: Pick<ITagSchema, "_id" | "name">[] }>({
+            .populate<{ tags: PopulatedTag[] }>({
                 path: "tags",
                 model: TagModel,
                 select: "_id name",
             })
             .populate<{
-                author: Pick<IUserSchema, "_id" | "picture" | "name">;
+                author: PopulatedUser;
             }>({
                 path: "author",
                 model: UserModel,
