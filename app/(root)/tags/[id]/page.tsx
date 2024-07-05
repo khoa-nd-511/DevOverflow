@@ -20,7 +20,7 @@ const TagDetailsPage = async ({
 
             <div className="mt-10">
                 <LocalSearch
-                    placeholder={`Search questions related to ${name}...`}
+                    placeholder={`Search questions related to ${name} tag...`}
                 />
             </div>
 
