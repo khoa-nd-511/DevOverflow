@@ -54,6 +54,7 @@ const CollectionPage = async () => {
                                 title={question.title}
                                 upvotes={question.upvotes.length}
                                 views={question.views}
+                                clerkId={clerkId}
                             />
                         );
                     })

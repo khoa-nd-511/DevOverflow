@@ -38,6 +38,7 @@ const TagDetailsPage = async ({
                                 title={question.title}
                                 upvotes={question.upvotes.length}
                                 views={question.views}
+                                clerkId=""
                             />
                         );
                     })
