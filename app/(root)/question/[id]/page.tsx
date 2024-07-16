@@ -25,7 +25,7 @@ const QuestionDetailsPage = async ({
         redirect("/sign-in");
     }
 
-    const mongoUser = await getUserById({ userId });
+    const mongoUser = await getUserById({ clerkId: userId });
 
     const question = await getQuestionById({ questionId: id });
 

@@ -9,14 +9,12 @@ interface IAnswersTabProps extends SearchParamsProps {
     clerkId: string;
 }
 
-const AnswersTab = async ({ userId }: IAnswersTabProps) => {
+const AnswersTab = async ({ userId, clerkId }: IAnswersTabProps) => {
     const { userAnswers } = await getUserAnswers({
         userId,
         page: 1,
         pageSize: 10,
     });
-
-    console.log("userAnswers", userAnswers);
 
     return (
         <div className="mt-10 flex flex-col gap-6">
@@ -28,7 +26,7 @@ const AnswersTab = async ({ userId }: IAnswersTabProps) => {
                         question={question}
                         upvotes={upvotes.length}
                         createdAt={createdAt}
-                        // clerkId={}
+                        clerkId={clerkId}
                         key={String(_id)}
                     />
                 )

@@ -7,10 +7,11 @@ import {
     PopulatedQuestionCompact,
     PopulatedUser,
 } from "@/lib/actions/shared.types";
+import EditDeleteButtons from "../shared/EditDeleteButtons";
 
 interface Props {
     id: string;
-    clerkId?: string | null;
+    clerkId: string;
     question: PopulatedQuestionCompact;
     author: PopulatedUser;
     upvotes: number;
@@ -25,7 +26,7 @@ const AnswerCard = ({
     upvotes,
     createdAt,
 }: Props) => {
-    // const showActionButtons = clerkId && clerkId === author.clerkId;
+    const showActionButtons = clerkId && clerkId === author.clerkId;
 
     return (
         <Link
@@ -43,9 +44,9 @@ const AnswerCard = ({
                 </div>
 
                 <SignedIn>
-                    {/* {showActionButtons && (
-            <EditDeleteAction type='Answer' itemId={JSON.stringify(id)} />
-          )} */}
+                    {showActionButtons && (
+                        <EditDeleteButtons type="answer" id={id} />
+                    )}
                 </SignedIn>
             </div>
 

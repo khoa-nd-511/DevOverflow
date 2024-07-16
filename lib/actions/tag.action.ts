@@ -1,7 +1,4 @@
-import UserModel from "@/database/user.model";
-import TagModel, { ITagSchema } from "@/database/tag.model";
-import QuestionModel from "@/database/question.model";
-
+import { ITagSchema, TagModel, UserModel, QuestionModel } from "@/database";
 import { connectToDB } from "../mongoose";
 import {
     IGetAllTagsParams,

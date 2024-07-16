@@ -1,14 +1,13 @@
 "use client";
 
 import React, { KeyboardEvent, useRef, useState } from "react";
-import Image from "next/image";
-import { Editor } from "@tinymce/tinymce-react";
-import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import * as z from "zod";
 import { usePathname, useRouter } from "next/navigation";
+import { Editor } from "@tinymce/tinymce-react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
@@ -17,20 +16,28 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { askQuestionFormSchema } from "@/lib/validations";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useTheme } from "@/context/ThemeProvider";
-
-let type = "edit";
-type = "create";
 
 interface IQuestionFormProps {
     mongoUserId: string;
+    id?: string;
+    title?: string;
+    description?: string;
+    tags?: string[];
 }
 
-const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
+const QuestionForm = ({
+    mongoUserId,
+    id,
+    title,
+    description,
+    tags,
+}: IQuestionFormProps) => {
     const { mode } = useTheme();
     const router = useRouter();
     const pathname = usePathname();
@@ -39,13 +46,15 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const type = id ? "edit" : "create";
+
     // 1. Define your form.
     const form = useForm<z.infer<typeof askQuestionFormSchema>>({
         resolver: zodResolver(askQuestionFormSchema),
         defaultValues: {
-            title: "",
-            description: "",
-            tags: [],
+            title: title || "",
+            description: description || "",
+            tags: tags || [],
         },
     });
 
@@ -56,13 +65,24 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
         setIsSubmitting(true);
 
         try {
-            await createQuestion({
-                ...values,
-                author: JSON.parse(mongoUserId),
-                pathname,
-            });
-
-            router.push("/");
+            if (type === "create") {
+                await createQuestion({
+                    ...values,
+                    author: JSON.parse(mongoUserId),
+                    pathname,
+                });
+                router.push("/");
+            } else if (type === "edit") {
+                if (!id) return;
+                await editQuestion({
+                    questionId: id,
+                    title: values.title,
+                    description: values.description,
+                    tags: values.tags,
+                    pathname,
+                });
+                router.push(`/question/${id}`);
+            }
         } catch (error) {
         } finally {
             setIsSubmitting(false);
@@ -152,7 +172,7 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
                                     onEditorChange={(content) =>
                                         field.onChange(content)
                                     }
-                                    initialValue=""
+                                    initialValue={description || ""}
                                     init={{
                                         height: 500,
                                         menubar: false,
@@ -209,7 +229,10 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
                                         onKeyDown={(e) =>
                                             handleKeyDownEvent(e, field)
                                         }
-                                        disabled={field.value.length >= 3}
+                                        disabled={
+                                            type === "edit" ||
+                                            field.value.length >= 3
+                                        }
                                     />
 
                                     {field.value.length > 0 && (
@@ -220,18 +243,24 @@ const QuestionForm = ({ mongoUserId }: IQuestionFormProps) => {
                                                     className="subtle-medium background-light800_dark300 text-dark400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
                                                 >
                                                     {tag}
-                                                    <Image
-                                                        src="/assets/icons/close.svg"
-                                                        alt="close icon"
-                                                        width={12}
-                                                        height={12}
-                                                        className="cursor-pointer object-contain invert-0 dark:invert"
-                                                        onClick={() =>
-                                                            handleTagRemoval(
-                                                                tag
-                                                            )
-                                                        }
-                                                    />
+                                                    {type === "create" && (
+                                                        <Image
+                                                            src="/assets/icons/close.svg"
+                                                            alt="close icon"
+                                                            width={12}
+                                                            height={12}
+                                                            className="cursor-pointer object-contain invert-0 dark:invert"
+                                                            onClick={
+                                                                type ===
+                                                                "create"
+                                                                    ? () =>
+                                                                          handleTagRemoval(
+                                                                              tag
+                                                                          )
+                                                                    : undefined
+                                                            }
+                                                        />
+                                                    )}
                                                 </Badge>
                                             ))}
                                         </div>

@@ -1,9 +1,8 @@
 "use server";
 
-import QuestionModel from "@/database/question.model";
+import { InteractionModel, QuestionModel } from "@/database";
 import { connectToDB } from "../mongoose";
 import { IViewQuestionParams } from "./shared.types";
-import InteractionModel from "@/database/interaction.model";
 
 export async function viewQuestion(params: IViewQuestionParams) {
     try {

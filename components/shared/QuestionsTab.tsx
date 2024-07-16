@@ -8,7 +8,7 @@ interface IQuestionsTabProps extends SearchParamsProps {
     clerkId: string;
 }
 
-const QuestionsTab = async ({ userId }: IQuestionsTabProps) => {
+const QuestionsTab = async ({ userId, clerkId }: IQuestionsTabProps) => {
     const { userQuestions } = await getUserQuestions({
         userId,
         page: 1,
@@ -19,8 +19,8 @@ const QuestionsTab = async ({ userId }: IQuestionsTabProps) => {
             {userQuestions.map((question) => {
                 return (
                     <QuestionCard
-                        key={question._id as string}
-                        id={question._id as string}
+                        key={String(question._id)}
+                        id={String(question._id)}
                         answers={question.answers}
                         author={question.author}
                         createdAt={question.createdAt}
@@ -28,6 +28,7 @@ const QuestionsTab = async ({ userId }: IQuestionsTabProps) => {
                         title={question.title}
                         upvotes={question.upvotes.length}
                         views={question.views}
+                        clerkId={clerkId}
                     />
                 );
             })}

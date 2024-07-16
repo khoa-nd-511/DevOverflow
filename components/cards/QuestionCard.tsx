@@ -1,11 +1,12 @@
 import React from "react";
 import Link from "next/link";
+import { SignedIn } from "@clerk/nextjs";
 
 import { formatNumber, getTimestamp } from "@/lib/utils";
 import { PopulatedTag, PopulatedUser } from "@/lib/actions/shared.types";
-
-import Tag from "../shared/Tag";
-import Metric from "../shared/Metric";
+import Tag from "@/components/shared/Tag";
+import Metric from "@/components/shared/Metric";
+import EditDeleteButtons from "@/components/shared/EditDeleteButtons";
 
 interface IQuestionProps {
     id: string;
@@ -16,6 +17,7 @@ interface IQuestionProps {
     views: number;
     answers: Array<object>;
     createdAt: Date;
+    clerkId: string;
 }
 
 const QuestionCard = ({
@@ -27,7 +29,10 @@ const QuestionCard = ({
     title,
     upvotes,
     views,
+    clerkId,
 }: IQuestionProps) => {
+    const showActionsButton = clerkId === author.clerkId;
+
     return (
         <div className="card-wrapper rounded-lg p-9 sm:p-11">
             <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
@@ -43,7 +48,11 @@ const QuestionCard = ({
                     </Link>
                 </div>
 
-                {/* if signed in add edit/delete actions */}
+                {showActionsButton && (
+                    <SignedIn>
+                        <EditDeleteButtons type="question" id={id} />
+                    </SignedIn>
+                )}
             </div>
 
             <div className="mt-3.5 flex flex-wrap gap-2">

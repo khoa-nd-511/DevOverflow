@@ -1,9 +1,7 @@
 import { Schema } from "mongoose";
 
 import { IUser } from "@/mongodb";
-import { IQuestionSchema } from "@/database/question.model";
-import { IUserSchema } from "@/database/user.model";
-import { ITagSchema } from "@/database/tag.model";
+import { IQuestionSchema, ITagSchema, IUserSchema } from "@/database";
 
 // collapse(1:159)
 export interface ICreateAnswerParams {
@@ -90,7 +88,8 @@ export interface IDeleteQuestionParams {
 export interface IEditQuestionParams {
     questionId: string;
     title: string;
-    content: string;
+    description: string;
+    tags: string[];
     pathname: string;
 }
 
@@ -121,8 +120,8 @@ export interface ICreateUserParams {
     picture: string;
 }
 
-export interface IGetUserByIdParams {
-    userId: string;
+export interface IGetUserByClerkIdParams {
+    clerkId: string;
 }
 
 export interface IGetAllUsersParams {

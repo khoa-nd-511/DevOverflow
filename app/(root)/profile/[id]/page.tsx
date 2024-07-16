@@ -21,7 +21,7 @@ const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
     }
 
     const { user, totalAnswers, totalQuestions } = await getUserInfo({
-        userId: id,
+        clerkId: id,
     });
 
     return (

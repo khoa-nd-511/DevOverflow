@@ -1,12 +1,22 @@
 "use server";
 import { revalidatePath } from "next/cache";
-
-import QuestionModel, { IQuestionSchema } from "@/database/question.model";
-import TagModel, { ITagSchema } from "@/database/tag.model";
-import UserModel, { IUserSchema } from "@/database/user.model";
+import { redirect } from "next/navigation";
+import { FilterQuery, UpdateQuery } from "mongoose";
 
 import {
+    QuestionModel,
+    ITagSchema,
+    TagModel,
+    IUserSchema,
+    UserModel,
+    IQuestionSchema,
+    AnswerModel,
+    InteractionModel,
+} from "@/database";
+import {
     ICreateQuestionParams,
+    IDeleteQuestionParams,
+    IEditQuestionParams,
     IGetQuestionByIdParams,
     IGetQuestionsParams,
     IGetSavedQuestionsParams,
@@ -17,8 +27,6 @@ import {
     PopulatedUser,
 } from "./shared.types";
 import { connectToDB } from "../mongoose";
-import { FilterQuery, UpdateQuery } from "mongoose";
-import { redirect } from "next/navigation";
 
 export async function getQuestions(params: IGetQuestionsParams) {
     try {
@@ -105,13 +113,13 @@ export async function getQuestionById(params: IGetQuestionByIdParams) {
             });
 
         if (!question) {
-            return redirect("/");
+            redirect("/");
         }
 
         return question;
     } catch (error) {
         console.error("Unable to get question by id" + questionId, error);
-        throw error;
+        redirect("/");
     }
 }
 
@@ -241,6 +249,52 @@ export async function saveQuestion(params: IToggleSaveQuestionParams) {
         revalidatePath(pathname);
     } catch (error) {
         console.log("Unable to save question", error);
+        throw error;
+    }
+}
+
+export async function editQuestion(params: IEditQuestionParams) {
+    const { questionId, title, description, pathname } = params;
+    try {
+        await connectToDB();
+
+        const question = await QuestionModel.findOneAndUpdate(
+            { _id: questionId },
+            {
+                title,
+                description,
+            }
+        );
+
+        if (!question) {
+            throw new Error("Question not found");
+        }
+
+        revalidatePath(pathname);
+    } catch (error) {
+        console.error("Unable to edit question", questionId, error);
+        throw error;
+    }
+}
+
+export async function deleteQuestion(params: IDeleteQuestionParams) {
+    const { questionId, pathname } = params;
+    try {
+        await connectToDB();
+
+        await Promise.all([
+            QuestionModel.findByIdAndDelete(questionId),
+            AnswerModel.deleteMany({ question: questionId }),
+            InteractionModel.deleteMany({ question: questionId }),
+            TagModel.updateMany(
+                { questions: questionId },
+                { $pull: { questions: questionId } }
+            ),
+        ]);
+
+        revalidatePath(pathname);
+    } catch (error) {
+        console.error("Unable to delete question", questionId, error);
         throw error;
     }
 }

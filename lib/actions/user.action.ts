@@ -1,14 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import UserModel from "@/database/user.model";
-import QuestionModel from "@/database/question.model";
-import AnswerModel from "@/database/answer.model";
+
+import { UserModel, QuestionModel, AnswerModel } from "@/database";
 import {
     ICreateUserParams,
     IDeleteUserParams,
     IGetAllUsersParams,
-    IGetUserByIdParams,
+    IGetUserByClerkIdParams,
     IGetUserStatsParams,
     IUpdateUserParams,
     PopulatedQuestionCompact,
@@ -32,33 +31,33 @@ export async function getAllUsers(params: IGetAllUsersParams) {
     }
 }
 
-export async function getUserById(params: any) {
-    const { userId } = params;
+export async function getUserById(params: IGetUserByClerkIdParams) {
+    const { clerkId } = params;
     try {
         await connectToDB();
 
-        const user = await UserModel.findOne({ clerkId: userId });
+        const user = await UserModel.findOne({ clerkId });
 
         if (!user) {
-            throw new Error("User not found" + userId);
+            throw new Error("User not found" + clerkId);
         }
 
         return user;
     } catch (error) {
-        console.error("unable to find user with id", userId);
+        console.error("unable to find user with id", clerkId);
         throw error;
     }
 }
 
-export async function getUserInfo(params: IGetUserByIdParams) {
-    const { userId } = params;
+export async function getUserInfo(params: IGetUserByClerkIdParams) {
+    const { clerkId } = params;
     try {
         await connectToDB();
 
-        const user = await UserModel.findOne({ userId });
+        const user = await UserModel.findOne({ clerkId });
 
         if (!user) {
-            throw new Error("User not found" + userId);
+            throw new Error("User not found" + clerkId);
         }
 
         const [totalQuestions, totalAnswers] = await Promise.all([
@@ -72,7 +71,7 @@ export async function getUserInfo(params: IGetUserByIdParams) {
 
         return { user, totalAnswers, totalQuestions };
     } catch (error) {
-        console.error("unable to find user info", userId);
+        console.error("unable to find user info", clerkId);
         throw error;
     }
 }
@@ -133,8 +132,6 @@ export async function getUserAnswers(params: IGetUserStatsParams) {
                     "_id title"
                 ),
         ]);
-
-        console.log({ totalAnswers, userAnswers });
 
         return { totalAnswers, userAnswers };
     } catch (error) {

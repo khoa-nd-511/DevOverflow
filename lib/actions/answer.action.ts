@@ -3,12 +3,16 @@
 import { UpdateQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
 
-import AnswerModel, { IAnswerSchema } from "@/database/answer.model";
-import QuestionModel from "@/database/question.model";
-
+import {
+    AnswerModel,
+    IAnswerSchema,
+    InteractionModel,
+    QuestionModel,
+} from "@/database";
 import {
     IAnswerVoteParams,
     ICreateAnswerParams,
+    IDeleteAnswerParams,
     IGetAnswersParams,
     PopulatedUser,
 } from "./shared.types";
@@ -114,6 +118,33 @@ export async function downvoteAnswer(params: IAnswerVoteParams) {
         revalidatePath(pathname);
     } catch (error) {
         console.log("Unable to downvote answer", error);
+        throw error;
+    }
+}
+
+export async function deleteAnswer(params: IDeleteAnswerParams) {
+    const { answerId, pathname } = params;
+    try {
+        await connectToDB();
+
+        const answer = await AnswerModel.findById(answerId);
+
+        if (!answer) {
+            throw new Error("Answer not found " + answerId);
+        }
+
+        await Promise.all([
+            AnswerModel.deleteOne({ _id: answerId }),
+            QuestionModel.updateMany(
+                { _id: answer.question },
+                { $pull: { answers: answerId } }
+            ),
+            InteractionModel.deleteMany({ answer: answerId }),
+        ]);
+
+        revalidatePath(pathname);
+    } catch (error) {
+        console.error("Unable to delete answer", answerId, error);
         throw error;
     }
 }
