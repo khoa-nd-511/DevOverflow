@@ -48,6 +48,7 @@ const Home = async () => {
                                 title={question.title}
                                 upvotes={question.upvotes.length}
                                 views={question.views}
+                                clerkId={question.author.clerkId}
                             />
                         );
                     })
