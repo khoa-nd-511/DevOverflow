@@ -12,7 +12,10 @@ import { searchParamsSchema } from "@/lib/validations";
 const Tag = async ({ searchParams }: { searchParams: unknown }) => {
     const parsedSearchParams = searchParamsSchema.parse(searchParams);
 
-    const { tags } = await getAllTags({ searchQuery: parsedSearchParams.q });
+    const { tags } = await getAllTags({
+        searchQuery: parsedSearchParams.q,
+        filter: parsedSearchParams.filter,
+    });
 
     return (
         <>

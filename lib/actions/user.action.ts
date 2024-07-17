@@ -15,15 +15,16 @@ import {
     PopulatedUser,
 } from "./shared.types";
 import { connectToDB } from "../mongoose";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, SortOrder } from "mongoose";
 
 export async function getAllUsers(params: IGetAllUsersParams) {
     try {
         await connectToDB();
 
-        const { searchQuery } = params;
+        const { searchQuery, filter } = params;
 
         const query: FilterQuery<typeof UserModel> = {};
+        let sortOption: Record<string, SortOrder> = { joinedAt: -1 };
 
         if (searchQuery) {
             query.$or = [
@@ -32,7 +33,26 @@ export async function getAllUsers(params: IGetAllUsersParams) {
             ];
         }
 
-        const users = await UserModel.find(query).sort({ joinedAt: -1 });
+        if (filter) {
+            sortOption = {};
+
+            switch (filter) {
+                case "new_users":
+                    sortOption.joinedAt = -1;
+                    break;
+                case "old_users":
+                    sortOption.joinedAt = 1;
+                    break;
+                case "top_contributors":
+                    sortOption.reputation = -1;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        const users = await UserModel.find(query).sort(sortOption);
 
         return { users };
     } catch (error) {

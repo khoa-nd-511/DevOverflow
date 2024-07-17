@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { FilterQuery, UpdateQuery } from "mongoose";
+import { FilterQuery, SortOrder, UpdateQuery } from "mongoose";
 
 import {
     QuestionModel,
@@ -32,15 +32,38 @@ export async function getQuestions(params: IGetQuestionsParams) {
     try {
         await connectToDB();
 
-        const { searchQuery } = params;
+        const { searchQuery, filter } = params;
 
         const query: FilterQuery<typeof QuestionModel> = {};
+        let sortOption: Record<string, SortOrder> = { createdAt: -1 };
 
         if (searchQuery) {
             query.$or = [
                 { title: { $regex: new RegExp(searchQuery, "i") } },
                 { description: { $regex: new RegExp(searchQuery, "i") } },
             ];
+        }
+
+        if (filter) {
+            sortOption = {};
+            switch (filter) {
+                case "newest":
+                    sortOption.updatedAt = -1;
+                    sortOption.createdAt = -1;
+                    break;
+                case "recommended":
+                    break;
+                case "frequent":
+                    sortOption.views = -1;
+                    break;
+                case "unanswered":
+                    query.answers = { $size: 0 };
+                    sortOption.createdAt = -1;
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         const questions = await QuestionModel.find(query)
@@ -51,7 +74,7 @@ export async function getQuestions(params: IGetQuestionsParams) {
                 path: "author",
                 model: UserModel,
             })
-            .sort({ createdAt: -1 });
+            .sort(sortOption);
 
         return { questions };
     } catch (error) {
@@ -64,15 +87,40 @@ export async function getSavedQuestions(params: IGetSavedQuestionsParams) {
     try {
         await connectToDB();
 
-        const { clerkId, searchQuery } = params;
+        const { clerkId, searchQuery, filter } = params;
 
         const query: FilterQuery<typeof QuestionModel> = {};
+        let sortOption: Record<string, SortOrder> = { createdAt: -1 };
 
         if (searchQuery) {
             query.$or = [
                 { title: { $regex: new RegExp(searchQuery, "i") } },
                 { description: { $regex: new RegExp(searchQuery, "i") } },
             ];
+        }
+
+        if (filter) {
+            sortOption = {};
+            switch (filter) {
+                case "most_recent":
+                    sortOption.createdAt = -1;
+                    break;
+                case "oldest":
+                    sortOption.createdAt = 1;
+                    break;
+                case "most_voted":
+                    sortOption.upvoted = -1;
+                    break;
+                case "most_viewed":
+                    sortOption.views = -1;
+                    break;
+                case "most_answered":
+                    sortOption.answers = -1;
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         const user = await UserModel.findOne({ clerkId })
@@ -93,9 +141,7 @@ export async function getSavedQuestions(params: IGetSavedQuestionsParams) {
                     },
                 ],
                 options: {
-                    sort: {
-                        createdAt: -1,
-                    },
+                    sort: sortOption,
                 },
             })
             .sort({ createdAt: -1 });

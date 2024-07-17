@@ -13,6 +13,7 @@ const Community = async ({ searchParams }: { searchParams: unknown }) => {
 
     const { users } = await getAllUsers({
         searchQuery: parsedSearchParams.q,
+        filter: parsedSearchParams.filter,
     });
 
     return (

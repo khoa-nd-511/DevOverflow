@@ -2,8 +2,7 @@ import React from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { HomePageFilters } from "@/constants/filters";
-import HomeFilters from "@/components/home/HomeFilters";
+import { QuestionFilters } from "@/constants/filters";
 import Filter from "@/components/shared/Filter";
 import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
@@ -21,6 +20,7 @@ const CollectionPage = async ({ searchParams }: { searchParams: unknown }) => {
     const questions = await getSavedQuestions({
         clerkId,
         searchQuery: parsedSearchParams.q,
+        filter: parsedSearchParams.filter,
     });
 
     return (
@@ -37,21 +37,18 @@ const CollectionPage = async ({ searchParams }: { searchParams: unknown }) => {
                 <LocalSearch placeholder="Enter question's title..." />
 
                 <Filter
-                    filters={HomePageFilters}
+                    filters={QuestionFilters}
                     otherClasses="min-h-[56px] sm:min-w-[170px]"
-                    containerClasses="hidden max-md:flex"
                 />
             </div>
-
-            <HomeFilters />
 
             <div className="mt-10 flex w-full flex-col gap-6">
                 {questions.length > 0 ? (
                     questions.map((question) => {
                         return (
                             <QuestionCard
-                                key={question._id as string}
-                                id={question._id as string}
+                                key={String(question._id)}
+                                id={String(question._id)}
                                 answers={question.answers}
                                 author={question.author}
                                 createdAt={question.createdAt}

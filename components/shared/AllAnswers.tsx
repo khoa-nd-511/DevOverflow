@@ -14,11 +14,12 @@ interface IAllAnswersProps {
     questionId: string;
     userId: string;
     page?: number;
-    filter?: number;
+    filter?: string;
 }
 
-const AllAnswers = async ({ questionId, userId }: IAllAnswersProps) => {
-    const answers = await getAnswersByQuestionId({ questionId });
+const AllAnswers = async ({ questionId, userId, filter }: IAllAnswersProps) => {
+    console.log("filter", filter);
+    const answers = await getAnswersByQuestionId({ questionId, filter });
 
     const totalAnswers = answers.length;
 

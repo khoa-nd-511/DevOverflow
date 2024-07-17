@@ -13,17 +13,22 @@ import AllAnswers from "@/components/shared/AllAnswers";
 import UserDisplay from "@/components/shared/UserDisplay";
 import Voting from "@/components/shared/Voting";
 import { Schema } from "mongoose";
+import { searchParamsSchema } from "@/lib/validations";
 
 const QuestionDetailsPage = async ({
     params: { id },
+    searchParams,
 }: {
     params: { id: string };
+    searchParams: unknown;
 }) => {
     const { userId } = auth();
 
     if (!userId) {
         redirect("/sign-in");
     }
+
+    const parsedSearchParams = searchParamsSchema.parse(searchParams);
 
     const mongoUser = await getUserById({ clerkId: userId });
 
@@ -118,7 +123,11 @@ const QuestionDetailsPage = async ({
             <ParsedHTML data={description} />
 
             <div className="mt-10">
-                <AllAnswers questionId={id} userId={String(mongoUser._id)} />
+                <AllAnswers
+                    questionId={id}
+                    userId={String(mongoUser._id)}
+                    filter={parsedSearchParams.filter}
+                />
             </div>
 
             <div className="mt-20">

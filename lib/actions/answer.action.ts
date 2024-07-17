@@ -1,6 +1,6 @@
 "use server";
 
-import { UpdateQuery } from "mongoose";
+import { SortOrder, UpdateQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
 
 import {
@@ -22,12 +22,37 @@ export async function getAnswersByQuestionId(params: IGetAnswersParams) {
     try {
         await connectToDB();
 
-        const { questionId } = params;
+        const { questionId, filter } = params;
+
+        let sortOption: Record<string, SortOrder> = { createdAt: -1 };
+
+        // export const AnswerFilters = [
+        //     { name: "Highest Upvotes", value: "highest_upvotes" },
+        //     { name: "Lowest Upvotes", value: "lowest_upvotes" },
+        //     { name: "Most Recent", value: "recent" },
+        //     { name: "Oldest", value: "old" },
+
+        if (filter) {
+            sortOption = {};
+
+            switch (filter) {
+                case "highest_upvotes":
+                    sortOption.upvotes = -1;
+                    break;
+                case "lowest_upvotes":
+                    sortOption.downvotes = -1;
+                    break;
+                case "recent":
+                    sortOption.createdAt = -1;
+                    break;
+                case "old":
+                    sortOption.createdAt = 1;
+                    break;
+            }
+        }
 
         const answers = await AnswerModel.find({ question: questionId })
-            .sort({
-                createdAt: -1,
-            })
+            .sort(sortOption)
             .populate<{
                 author: PopulatedUser;
             }>({ path: "author", select: "_id clerkId name picture" });

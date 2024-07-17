@@ -16,6 +16,7 @@ export interface IGetAnswersParams {
     sortBy?: string;
     page?: number;
     pageSize?: number;
+    filter?: string;
 }
 
 export interface IAnswerVoteParams {
@@ -70,6 +71,7 @@ export interface ICreateQuestionParams {
 
 export interface IGetQuestionByIdParams {
     questionId: string;
+    filter?: string;
 }
 
 export interface IQuestionVoteParams {

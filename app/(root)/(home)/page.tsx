@@ -15,6 +15,7 @@ const Home = async ({ searchParams }: { searchParams: unknown }) => {
 
     const { questions } = await getQuestions({
         searchQuery: parsedSearchParams.q,
+        filter: parsedSearchParams.filter,
     });
 
     return (

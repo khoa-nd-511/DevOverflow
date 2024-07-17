@@ -30,7 +30,6 @@ const LocalSearch = ({
 
     const parsedQuery = searchParamsSchema.parse({
         q: searchParams.get("q"),
-        filter: searchParams.get("filter"),
     });
 
     const [search, setSearch] = useState(parsedQuery.q);

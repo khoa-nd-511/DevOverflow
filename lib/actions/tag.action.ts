@@ -8,24 +8,46 @@ import {
     PopulatedQuestion,
 } from "./shared.types";
 import console from "console";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, SortOrder } from "mongoose";
 
 export async function getAllTags(params: IGetAllTagsParams) {
     try {
         await connectToDB();
 
-        const { page = 1, size = 10, searchQuery } = params;
+        const { page = 1, size = 10, searchQuery, filter } = params;
 
         const query: FilterQuery<typeof TagModel> = {};
+        let sortOption: Record<string, SortOrder> = { createdAt: -1 };
 
         if (searchQuery) {
             query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
         }
 
+        if (filter) {
+            sortOption = {};
+            switch (filter) {
+                case "popular":
+                    sortOption.questions = -1;
+                    break;
+                case "recent":
+                    sortOption.createdAt = -1;
+                    break;
+                case "name":
+                    sortOption.name = 1;
+                    break;
+                case "old":
+                    sortOption.createdAt = 1;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         const tags: ITagSchema[] = await TagModel.find(query)
             .limit(size)
             .skip((page - 1) * size)
-            .sort({ createdAt: -1 });
+            .sort(sortOption);
 
         return { tags };
     } catch (error) {
