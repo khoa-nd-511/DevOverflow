@@ -32,7 +32,18 @@ export async function getQuestions(params: IGetQuestionsParams) {
     try {
         await connectToDB();
 
-        const questions = await QuestionModel.find({})
+        const { searchQuery } = params;
+
+        const query: FilterQuery<typeof QuestionModel> = {};
+
+        if (searchQuery) {
+            query.$or = [
+                { title: { $regex: new RegExp(searchQuery, "i") } },
+                { description: { $regex: new RegExp(searchQuery, "i") } },
+            ];
+        }
+
+        const questions = await QuestionModel.find(query)
             .populate<{
                 tags: ITagSchema[];
             }>({ path: "tags", model: TagModel })

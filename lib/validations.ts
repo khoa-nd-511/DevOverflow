@@ -9,3 +9,8 @@ export const askQuestionFormSchema = z.object({
 export const answerFormSchema = z.object({
     content: z.string().min(100),
 });
+
+export const searchParamsSchema = z.object({
+    q: z.string().catch(""),
+    filter: z.string().catch(""),
+});

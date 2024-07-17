@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import qs from "query-string";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -48,4 +49,26 @@ export function getJoinedDate(date: Date) {
     const year = date.getFullYear();
 
     return `${month} ${year}`;
+}
+
+interface IConstructURLFromQueryStringParams {
+    searchParams: string;
+    key: string;
+    value: string | null;
+}
+
+export function constructURLFromQueryString({
+    key,
+    searchParams,
+    value,
+}: IConstructURLFromQueryStringParams) {
+    const parsed = qs.parse(searchParams);
+    parsed[key] = value;
+    return qs.stringifyUrl(
+        {
+            url: window.location.pathname,
+            query: parsed,
+        },
+        { skipEmptyString: true }
+    );
 }

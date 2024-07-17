@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn, constructURLFromQueryString } from "@/lib/utils";
+import { searchParamsSchema } from "@/lib/validations";
 
 interface ILocalSearch {
     route?: string;
@@ -21,6 +23,34 @@ const LocalSearch = ({
     imgURL = "/assets/icons/search.svg",
     otherClasses = "",
 }: ILocalSearch) => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const searchParamsString = searchParams.toString();
+
+    const parsedQuery = searchParamsSchema.parse({
+        q: searchParams.get("q"),
+        filter: searchParams.get("filter"),
+    });
+
+    const [search, setSearch] = useState(parsedQuery.q);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            const newURL = constructURLFromQueryString({
+                searchParams: searchParamsString,
+                key: "q",
+                value: search.trim(),
+            });
+
+            router.push(newURL, { scroll: false });
+        }, 500);
+
+        return () => {
+            clearTimeout(timeoutId);
+        };
+    }, [router, search, searchParamsString]);
+
     return (
         <div className="relative w-full">
             <div
@@ -40,6 +70,8 @@ const LocalSearch = ({
                 <Input
                     type="text"
                     placeholder={placeholder}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                     className="paragraph-regular no-focus placeholder background-light800_darkgradient ml-4 border-none shadow-none outline-none"
                 />
             </div>

@@ -8,9 +8,15 @@ import { HomePageFilters } from "@/constants/filters";
 import QuestionCard from "@/components/cards/QuestionCard";
 import CTAButton from "@/components/shared/CTAButton";
 import { getQuestions } from "@/lib/actions/question.action";
+import { SearchParamsProps } from "@/types";
+import { searchParamsSchema } from "@/lib/validations";
 
-const Home = async () => {
-    const { questions } = await getQuestions({});
+const Home = async ({ searchParams }: SearchParamsProps) => {
+    const parsedSearchParams = searchParamsSchema.parse(searchParams);
+
+    const { questions } = await getQuestions({
+        searchQuery: parsedSearchParams.q,
+    });
 
     return (
         <>
