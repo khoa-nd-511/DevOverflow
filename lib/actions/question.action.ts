@@ -123,6 +123,24 @@ export async function getQuestionById(params: IGetQuestionByIdParams) {
     }
 }
 
+export async function getTopQuestions() {
+    try {
+        await connectToDB();
+
+        const questions = await QuestionModel.find({})
+            .sort({
+                views: -1,
+                upvotes: -1,
+            })
+            .limit(5);
+
+        return questions;
+    } catch (error) {
+        console.error("Unable to get questions", error);
+        throw error;
+    }
+}
+
 export async function createQuestion(params: ICreateQuestionParams) {
     try {
         await connectToDB();

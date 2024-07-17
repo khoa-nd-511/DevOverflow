@@ -4,8 +4,10 @@ import {
     IGetAllTagsParams,
     IGetQuestionsByTagIdParams,
     IGetTopInteractedTagsParams,
+    IPopularTag,
     PopulatedQuestion,
 } from "./shared.types";
+import console from "console";
 
 export async function getAllTags(params: IGetAllTagsParams) {
     try {
@@ -89,6 +91,28 @@ export async function getTagById(params: IGetQuestionsByTagIdParams) {
         return tag;
     } catch (error) {
         console.error(`Unable to get tag's questions`, error);
+        throw error;
+    }
+}
+
+export async function getPopularTags() {
+    try {
+        await connectToDB();
+
+        const tags: IPopularTag[] = await TagModel.aggregate([
+            {
+                $project: {
+                    name: 1,
+                    numberOfQuestions: { $size: "$questions" },
+                },
+            },
+            { $sort: { numberOfQuestions: -1 } },
+            { $limit: 5 },
+        ]);
+
+        return tags;
+    } catch (error) {
+        console.error(`Unable to get all tags`, error);
         throw error;
     }
 }

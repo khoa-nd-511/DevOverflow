@@ -172,3 +172,7 @@ export type PopulatedQuestion = Omit<IQuestionSchema, "tags" | "author"> & {
     tags: PopulatedTag[];
 };
 export type PopulatedQuestionCompact = Pick<IQuestionSchema, "_id" | "title">;
+
+export type IPopularTag = Pick<ITagSchema, "_id" | "name"> & {
+    numberOfQuestions: number;
+};
