@@ -15,14 +15,24 @@ import {
     PopulatedUser,
 } from "./shared.types";
 import { connectToDB } from "../mongoose";
+import { FilterQuery } from "mongoose";
 
 export async function getAllUsers(params: IGetAllUsersParams) {
     try {
         await connectToDB();
 
-        // const { page = 1, pageSize = 10, filter, searchQuery } = params;
+        const { searchQuery } = params;
 
-        const users = await UserModel.find({}).sort({ joinedAt: -1 });
+        const query: FilterQuery<typeof UserModel> = {};
+
+        if (searchQuery) {
+            query.$or = [
+                { name: { $regex: new RegExp(searchQuery, "i") } },
+                { username: { $regex: new RegExp(searchQuery, "i") } },
+            ];
+        }
+
+        const users = await UserModel.find(query).sort({ joinedAt: -1 });
 
         return { users };
     } catch (error) {

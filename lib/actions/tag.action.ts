@@ -8,14 +8,21 @@ import {
     PopulatedQuestion,
 } from "./shared.types";
 import console from "console";
+import { FilterQuery } from "mongoose";
 
 export async function getAllTags(params: IGetAllTagsParams) {
     try {
         await connectToDB();
 
-        const { page = 1, size = 10 } = params;
+        const { page = 1, size = 10, searchQuery } = params;
 
-        const tags: ITagSchema[] = await TagModel.find({})
+        const query: FilterQuery<typeof TagModel> = {};
+
+        if (searchQuery) {
+            query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
+        }
+
+        const tags: ITagSchema[] = await TagModel.find(query)
             .limit(size)
             .skip((page - 1) * size)
             .sort({ createdAt: -1 });
@@ -63,7 +70,7 @@ export async function getTagById(params: IGetQuestionsByTagIdParams) {
             .populate<{ questions: PopulatedQuestion[] }>({
                 path: "questions",
                 match: searchQuery
-                    ? { title: { $regex: searchQuery, $option: "i" } }
+                    ? { title: { $regex: new RegExp(searchQuery, "i") } }
                     : {},
                 model: QuestionModel,
                 populate: [

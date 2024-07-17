@@ -3,14 +3,22 @@ import CTAButton from "@/components/shared/CTAButton";
 import NoResults from "@/components/shared/NoResults";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { getTagById } from "@/lib/actions/tag.action";
+import { searchParamsSchema } from "@/lib/validations";
 import React from "react";
 
 const TagDetailsPage = async ({
     params: { id },
+    searchParams,
 }: {
     params: { id: string };
+    searchParams: unknown;
 }) => {
-    const tag = await getTagById({ tagId: id });
+    const parsedSearchParams = searchParamsSchema.parse(searchParams);
+
+    const tag = await getTagById({
+        tagId: id,
+        searchQuery: parsedSearchParams.q,
+    });
 
     const { name, questions } = tag;
 

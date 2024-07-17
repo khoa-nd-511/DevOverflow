@@ -10,13 +10,18 @@ import LocalSearch from "@/components/shared/search/LocalSearch";
 import QuestionCard from "@/components/cards/QuestionCard";
 import CTAButton from "@/components/shared/CTAButton";
 import { getSavedQuestions } from "@/lib/actions/question.action";
+import { searchParamsSchema } from "@/lib/validations";
 
-const CollectionPage = async () => {
+const CollectionPage = async ({ searchParams }: { searchParams: unknown }) => {
+    const parsedSearchParams = searchParamsSchema.parse(searchParams);
     const { userId: clerkId } = auth();
 
     if (!clerkId) redirect("/sign-in");
 
-    const questions = await getSavedQuestions({ clerkId });
+    const questions = await getSavedQuestions({
+        clerkId,
+        searchQuery: parsedSearchParams.q,
+    });
 
     return (
         <>
