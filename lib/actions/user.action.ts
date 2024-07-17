@@ -159,11 +159,13 @@ export async function updateUser(params: IUpdateUserParams) {
 
         const { clerkId, payload, pathname } = params;
 
-        await UserModel.findOneAndUpdate({ clerkId }, payload, { new: true });
+        await UserModel.findOneAndUpdate({ clerkId }, payload, {
+            new: true,
+        });
 
         revalidatePath(pathname);
     } catch (error) {
-        console.error("unable to create user");
+        console.error("unable to update user");
         throw error;
     }
 }

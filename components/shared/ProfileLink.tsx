@@ -1,5 +1,5 @@
-import { Link } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 interface IProfileLinkProps {
@@ -11,12 +11,19 @@ interface IProfileLinkProps {
 const ProfileLink = ({ imgURL, title, href }: IProfileLinkProps) => {
     return (
         <div className="flex-center gap-1">
-            <Image src={imgURL} alt="icon" width={20} height={20} />
+            <Image
+                src={imgURL}
+                alt="icon"
+                width={20}
+                height={20}
+                className="mr-2"
+            />
+
             {href ? (
                 <Link
                     href={href}
                     target="_blank"
-                    className="paragraph-medium text-accent-blue"
+                    className="paragraph-medium cursor-pointer text-accent-blue"
                 >
                     {title}
                 </Link>

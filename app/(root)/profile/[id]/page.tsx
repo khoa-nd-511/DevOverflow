@@ -1,17 +1,17 @@
 import React from "react";
+import Image from "next/image";
+import { redirect } from "next/navigation";
 import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import Image from "next/image";
-import Link from "next/link";
-import { redirect } from "next/navigation";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserInfo } from "@/lib/actions/user.action";
 import { getJoinedDate } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileLink from "@/components/shared/ProfileLink";
 import Stats from "@/components/shared/Stats";
 import QuestionsTab from "@/components/shared/QuestionsTab";
 import AnswersTab from "@/components/shared/AnswersTab";
+import CTAButton from "@/components/shared/CTAButton";
 
 const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
     const { userId: clerkId } = auth();
@@ -51,6 +51,13 @@ const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
                                     imgURL="/assets/icons/location.svg"
                                 />
                             )}
+                            {user.website && (
+                                <ProfileLink
+                                    title={user.website}
+                                    href={user.website}
+                                    imgURL="/assets/icons/link.svg"
+                                />
+                            )}
 
                             <ProfileLink
                                 title={getJoinedDate(user.joinedAt)}
@@ -58,19 +65,19 @@ const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
                             />
                         </div>
 
-                        {user.bio && <p>{user.bio}</p>}
+                        {user.bio && (
+                            <p className="text-dark400_light700">{user.bio}</p>
+                        )}
                     </div>
                 </div>
 
                 <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
                     <SignedIn>
                         {clerkId === user.clerkId && (
-                            <Link
-                                href="/profile/edit"
-                                className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3 text-center"
-                            >
-                                Edit Profile
-                            </Link>
+                            <CTAButton
+                                href={`/profile/${id}/edit`}
+                                label="Edit Profile"
+                            />
                         )}
                     </SignedIn>
                 </div>
