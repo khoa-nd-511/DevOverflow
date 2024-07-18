@@ -32,9 +32,9 @@ export interface IDeleteAnswerParams {
     pathname: string;
 }
 
-export interface ISearchParams {
-    query?: string | null;
-    type?: string | null;
+export interface IGlobalSearchParams {
+    query: string;
+    type: string;
 }
 
 export interface IRecommendedParams {
@@ -175,6 +175,12 @@ export type PopulatedQuestion = Omit<IQuestionSchema, "tags" | "author"> & {
 };
 export type PopulatedQuestionCompact = Pick<IQuestionSchema, "_id" | "title">;
 
-export type IPopularTag = Pick<ITagSchema, "_id" | "name"> & {
+export type PopularTag = Pick<ITagSchema, "_id" | "name"> & {
     numberOfQuestions: number;
+};
+
+export type TGlobalResult = {
+    id: string;
+    title: string;
+    type: string;
 };

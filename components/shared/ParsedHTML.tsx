@@ -11,7 +11,7 @@ import parse from "html-react-parser";
 // import "prismjs/components/prism-aspnet";
 // import "prismjs/components/prism-sass";
 // import "prismjs/components/prism-jsx";
-// import "prismjs/components/prism-typescript";
+// import "prismjs/components/prism-javascript";
 // import "prismjs/components/prism-solidity";
 // import "prismjs/components/prism-json";
 // import "prismjs/components/prism-dart";
@@ -32,7 +32,9 @@ interface IParsedHTMLProps {
 
 const ParsedHTML = ({ data }: IParsedHTMLProps) => {
     // useEffect(() => {
-    //     Prism.highlightAll();
+    //     // settimeout as mentioned in their doc
+    //     // seems like it fixes the additional
+    //     setTimeout(() => Prism.highlightAll(), 0);
     // }, []);
 
     return <div className="text-dark100_light900">{parse(data)}</div>;

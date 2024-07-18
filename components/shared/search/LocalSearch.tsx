@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
 import { cn, constructURLFromQueryString } from "@/lib/utils";
-import { searchParamsSchema } from "@/lib/validations";
+import { useParsedSearchParams } from "@/lib/hooks";
 
 interface ILocalSearch {
     route?: string;
@@ -18,21 +18,15 @@ interface ILocalSearch {
 
 const LocalSearch = ({
     placeholder = "",
-    route = "/",
     iconPosition = "left",
     imgURL = "/assets/icons/search.svg",
     otherClasses = "",
 }: ILocalSearch) => {
     const router = useRouter();
-    const searchParams = useSearchParams();
 
-    const searchParamsString = searchParams.toString();
+    const { q, searchParamsString } = useParsedSearchParams();
 
-    const parsedQuery = searchParamsSchema.parse({
-        q: searchParams.get("q"),
-    });
-
-    const [search, setSearch] = useState(parsedQuery.q);
+    const [search, setSearch] = useState(q);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {

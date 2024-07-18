@@ -1,8 +1,11 @@
 "use client";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+
+import React from "react";
+import { UserIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+
 import Theme from "./Theme";
 import MobileNav from "./MobileNav";
 import GlobalSearch from "../search/GlobalSearch";
@@ -24,7 +27,7 @@ const NavBar = () => {
 
             <GlobalSearch />
 
-            <div className="flex-between gap-5">
+            <div className="flex-between min-w-[120px] gap-5">
                 <Theme />
                 <SignedIn>
                     <UserButton
@@ -38,6 +41,14 @@ const NavBar = () => {
                         }}
                     />
                 </SignedIn>
+                <SignedOut>
+                    <Link
+                        href="/sign-in"
+                        className="background-light800_dark400 flex size-[40px] rounded-full p-0 text-primary-500"
+                    >
+                        <UserIcon className="m-auto size-5" />
+                    </Link>
+                </SignedOut>
                 <MobileNav />
             </div>
         </nav>

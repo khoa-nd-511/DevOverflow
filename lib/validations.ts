@@ -12,5 +12,7 @@ export const answerFormSchema = z.object({
 
 export const searchParamsSchema = z.object({
     q: z.string().catch(""),
+    g: z.string().catch(""),
+    type: z.string().catch(""),
     filter: z.string().catch(""),
 });

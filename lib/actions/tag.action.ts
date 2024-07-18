@@ -4,7 +4,7 @@ import {
     IGetAllTagsParams,
     IGetQuestionsByTagIdParams,
     IGetTopInteractedTagsParams,
-    IPopularTag,
+    PopularTag,
     PopulatedQuestion,
 } from "./shared.types";
 import console from "console";
@@ -128,7 +128,7 @@ export async function getPopularTags() {
     try {
         await connectToDB();
 
-        const tags: IPopularTag[] = await TagModel.aggregate([
+        const tags: PopularTag[] = await TagModel.aggregate([
             {
                 $project: {
                     name: 1,
