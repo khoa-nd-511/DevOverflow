@@ -29,8 +29,8 @@ import {
 import { connectToDB } from "../mongoose";
 import {
     ASK_QUESTION_POINTS,
-    VOTE_GIVEN_POINTS,
-    VOTE_RECEIVED_POINTS,
+    VOTE_QUESTION_GIVEN_POINTS,
+    VOTE_QUESTION_RECEIVED_POINTS,
 } from "@/constants";
 
 export async function getQuestions(params: IGetQuestionsParams) {
@@ -271,17 +271,17 @@ export async function upvoteQuestion(params: IQuestionVoteParams) {
 
         if (hasUpvoted) {
             updates.$pull = { upvotes: userId };
-            authorReputationChange -= VOTE_RECEIVED_POINTS;
-            voterReputationChange -= VOTE_GIVEN_POINTS;
+            authorReputationChange -= VOTE_QUESTION_RECEIVED_POINTS;
+            voterReputationChange -= VOTE_QUESTION_GIVEN_POINTS;
         } else if (hasDownvoted) {
             updates.$push = { upvotes: userId };
             updates.$pull = { downvotes: userId };
-            authorReputationChange += VOTE_RECEIVED_POINTS * 2;
-            voterReputationChange += VOTE_GIVEN_POINTS * 2;
+            authorReputationChange += VOTE_QUESTION_RECEIVED_POINTS * 2;
+            voterReputationChange += VOTE_QUESTION_GIVEN_POINTS * 2;
         } else {
             updates.$addToSet = { upvotes: userId };
-            authorReputationChange += VOTE_RECEIVED_POINTS;
-            voterReputationChange += VOTE_GIVEN_POINTS;
+            authorReputationChange += VOTE_QUESTION_RECEIVED_POINTS;
+            voterReputationChange += VOTE_QUESTION_GIVEN_POINTS;
         }
 
         const question = await QuestionModel.findByIdAndUpdate(id, updates, {
@@ -331,17 +331,17 @@ export async function downvoteQuestion(params: IQuestionVoteParams) {
 
         if (hasDownvoted) {
             updates.$pull = { downvotes: userId };
-            authorReputationChange += VOTE_RECEIVED_POINTS;
-            voterReputationChange += VOTE_GIVEN_POINTS;
+            authorReputationChange += VOTE_QUESTION_RECEIVED_POINTS;
+            voterReputationChange += VOTE_QUESTION_GIVEN_POINTS;
         } else if (hasUpvoted) {
             updates.$pull = { upvotes: userId };
             updates.$push = { downvotes: userId };
-            authorReputationChange -= VOTE_RECEIVED_POINTS * 2;
-            voterReputationChange -= VOTE_GIVEN_POINTS * 2;
+            authorReputationChange -= VOTE_QUESTION_RECEIVED_POINTS * 2;
+            voterReputationChange -= VOTE_QUESTION_GIVEN_POINTS * 2;
         } else {
             updates.$addToSet = { downvotes: userId };
-            authorReputationChange -= VOTE_RECEIVED_POINTS;
-            voterReputationChange -= VOTE_GIVEN_POINTS;
+            authorReputationChange -= VOTE_QUESTION_RECEIVED_POINTS;
+            voterReputationChange -= VOTE_QUESTION_GIVEN_POINTS;
         }
 
         const question = await QuestionModel.findByIdAndUpdate(id, updates, {

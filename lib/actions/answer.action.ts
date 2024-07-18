@@ -8,6 +8,7 @@ import {
     IAnswerSchema,
     InteractionModel,
     QuestionModel,
+    UserModel,
 } from "@/database";
 import {
     IAnswerVoteParams,
@@ -17,6 +18,11 @@ import {
     PopulatedUser,
 } from "./shared.types";
 import { connectToDB } from "../mongoose";
+import {
+    SUBMIT_ANSWER_POINTS,
+    VOTE_ANSWER_GIVEN_POINTS,
+    VOTE_ANSWER_RECEIVED_POINTS,
+} from "@/constants";
 
 export async function getAnswersByQuestionId(params: IGetAnswersParams) {
     try {
@@ -80,6 +86,10 @@ export async function createAnswer(params: ICreateAnswerParams) {
             $push: { answers: answer._id },
         });
 
+        await UserModel.findByIdAndUpdate(author, {
+            $inc: { reputation: SUBMIT_ANSWER_POINTS },
+        });
+
         revalidatePath(pathname);
     } catch (error) {
         console.error("unable to create error", error);
@@ -95,13 +105,22 @@ export async function upvoteAnswer(params: IAnswerVoteParams) {
 
         const updates: UpdateQuery<IAnswerSchema> = {};
 
+        let authorReputationChange = 0;
+        let voterReputationChange = 0;
+
         if (hasUpvoted) {
             updates.$pull = { upvotes: userId };
+            authorReputationChange -= VOTE_ANSWER_RECEIVED_POINTS;
+            voterReputationChange -= VOTE_ANSWER_GIVEN_POINTS;
         } else if (hasDownvoted) {
             updates.$push = { upvotes: userId };
             updates.$pull = { downvotes: userId };
+            authorReputationChange += VOTE_ANSWER_RECEIVED_POINTS * 2;
+            voterReputationChange += VOTE_ANSWER_GIVEN_POINTS * 2;
         } else {
             updates.$addToSet = { upvotes: userId };
+            authorReputationChange += VOTE_ANSWER_RECEIVED_POINTS;
+            voterReputationChange += VOTE_ANSWER_GIVEN_POINTS;
         }
 
         const answer = await AnswerModel.findByIdAndUpdate(id, updates, {
@@ -109,6 +128,27 @@ export async function upvoteAnswer(params: IAnswerVoteParams) {
         });
 
         if (!answer) throw new Error("Answer not found");
+
+        const [author, voter] = await Promise.all([
+            UserModel.findById(answer.author),
+            UserModel.findById(userId),
+        ]);
+
+        if (!author || !voter) {
+            throw new Error("unable to find author/voter");
+        }
+
+        if (author.reputation === undefined) {
+            author.reputation = 0;
+        }
+        if (voter.reputation === undefined) {
+            voter.reputation = 0;
+        }
+
+        author.reputation += authorReputationChange;
+        voter.reputation += voterReputationChange;
+
+        await Promise.all([author.save(), voter.save()]);
 
         revalidatePath(pathname);
     } catch (error) {
@@ -125,13 +165,22 @@ export async function downvoteAnswer(params: IAnswerVoteParams) {
 
         const updates: UpdateQuery<IAnswerSchema> = {};
 
+        let authorReputationChange = 0;
+        let voterReputationChange = 0;
+
         if (hasDownvoted) {
             updates.$pull = { downvotes: userId };
+            authorReputationChange += VOTE_ANSWER_RECEIVED_POINTS;
+            voterReputationChange += VOTE_ANSWER_GIVEN_POINTS;
         } else if (hasUpvoted) {
             updates.$pull = { upvotes: userId };
             updates.$push = { downvotes: userId };
+            authorReputationChange -= VOTE_ANSWER_RECEIVED_POINTS * 2;
+            voterReputationChange -= VOTE_ANSWER_GIVEN_POINTS * 2;
         } else {
             updates.$addToSet = { downvotes: userId };
+            authorReputationChange -= VOTE_ANSWER_RECEIVED_POINTS;
+            voterReputationChange -= VOTE_ANSWER_GIVEN_POINTS;
         }
 
         const answer = await AnswerModel.findByIdAndUpdate(id, updates, {
@@ -139,6 +188,27 @@ export async function downvoteAnswer(params: IAnswerVoteParams) {
         });
 
         if (!answer) throw new Error("Answer not found");
+
+        const [author, voter] = await Promise.all([
+            UserModel.findById(answer.author),
+            UserModel.findById(userId),
+        ]);
+
+        if (!author || !voter) {
+            throw new Error("unable to find author/voter");
+        }
+
+        if (author.reputation === undefined) {
+            author.reputation = 0;
+        }
+        if (voter.reputation === undefined) {
+            voter.reputation = 0;
+        }
+
+        author.reputation += authorReputationChange;
+        voter.reputation += voterReputationChange;
+
+        await Promise.all([author.save(), voter.save()]);
 
         revalidatePath(pathname);
     } catch (error) {

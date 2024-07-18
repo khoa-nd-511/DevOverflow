@@ -59,7 +59,7 @@ const AnswerForm = ({ questionId, userId }: IAnswerFormProps) => {
                 editorRef.current.setContent("");
             }
 
-            form.clearErrors("content");
+            form.reset();
         } catch (error) {
             console.error(error);
         } finally {

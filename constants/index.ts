@@ -73,5 +73,8 @@ export const BADGE_CRITERIA = {
 };
 
 export const ASK_QUESTION_POINTS = 10;
-export const VOTE_RECEIVED_POINTS = 5;
-export const VOTE_GIVEN_POINTS = 1;
+export const SUBMIT_ANSWER_POINTS = 5;
+export const VOTE_QUESTION_RECEIVED_POINTS = 4;
+export const VOTE_QUESTION_GIVEN_POINTS = 2;
+export const VOTE_ANSWER_RECEIVED_POINTS = 2;
+export const VOTE_ANSWER_GIVEN_POINTS = 1;
