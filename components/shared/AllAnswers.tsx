@@ -18,7 +18,6 @@ interface IAllAnswersProps {
 }
 
 const AllAnswers = async ({ questionId, userId, filter }: IAllAnswersProps) => {
-    console.log("filter", filter);
     const answers = await getAnswersByQuestionId({ questionId, filter });
 
     const totalAnswers = answers.length;

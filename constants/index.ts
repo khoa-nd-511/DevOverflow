@@ -71,3 +71,7 @@ export const BADGE_CRITERIA = {
         GOLD: 100000,
     },
 };
+
+export const ASK_QUESTION_POINTS = 10;
+export const VOTE_RECEIVED_POINTS = 5;
+export const VOTE_GIVEN_POINTS = 1;
