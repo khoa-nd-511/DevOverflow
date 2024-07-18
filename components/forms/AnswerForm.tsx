@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import Image from "next/image";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,7 +73,7 @@ const AnswerForm = ({ questionId, userId }: IAnswerFormProps) => {
                     Write your answer here
                 </h4>
 
-                <Button className="btn light-border-2 gap-2 rounded-md px-4 py-2 text-primary-500 shadow-none">
+                {/* <Button className="btn light-border-2 gap-2 rounded-md px-4 py-2 text-primary-500 shadow-none">
                     <Image
                         src="/assets/icons/stars.svg"
                         alt="star"
@@ -83,7 +82,7 @@ const AnswerForm = ({ questionId, userId }: IAnswerFormProps) => {
                         className="object-contain"
                     />
                     Generate AI Answer
-                </Button>
+                </Button> */}
             </div>
 
             <Form {...form}>
