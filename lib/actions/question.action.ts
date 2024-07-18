@@ -235,6 +235,17 @@ export async function createQuestion(params: ICreateQuestionParams) {
             $push: { tags: { $each: tagDocuments } },
         });
 
+        await InteractionModel.create({
+            user: author,
+            question: question._id,
+            action: "ask_question",
+            tags: tagDocuments,
+        });
+
+        await UserModel.findByIdAndUpdate(author, {
+            $inc: { reputation: 5 },
+        });
+
         revalidatePath(pathname);
     } catch (error) {
         console.error("Unable to create question", error);
