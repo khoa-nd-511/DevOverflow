@@ -3,15 +3,23 @@ import React from "react";
 import { getTopInteractedTags } from "@/lib/actions/tag.action";
 
 import Tag from "../shared/Tag";
+import Link from "next/link";
 
 interface IUserCardProps {
     id: string;
+    clerkId: string;
     imgURL: string;
     name: string;
     username: string;
 }
 
-const UserCard = async ({ id, imgURL, name, username }: IUserCardProps) => {
+const UserCard = async ({
+    id,
+    imgURL,
+    name,
+    username,
+    clerkId,
+}: IUserCardProps) => {
     const tags = await getTopInteractedTags({ userId: id });
     return (
         <div className="card-wrapper w-full rounded-lg p-9 sm:w-[260px] sm:p-11">
@@ -24,9 +32,11 @@ const UserCard = async ({ id, imgURL, name, username }: IUserCardProps) => {
                     className="rounded-full"
                 />
 
-                <h3 className="h3-bold text-dark100_light900 line-clamp-1">
-                    {name}
-                </h3>
+                <Link href={`/profile/${clerkId}`}>
+                    <h3 className="h3-bold text-dark100_light900 line-clamp-1">
+                        {name}
+                    </h3>
+                </Link>
 
                 <p className="body-regular text-dark400_light500">
                     @{username}

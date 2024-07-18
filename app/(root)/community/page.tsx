@@ -39,7 +39,7 @@ const Community = async ({ searchParams }: { searchParams: unknown }) => {
 
             <div className="mt-10 flex w-full flex-wrap gap-6">
                 {users.length > 0 ? (
-                    users.map(({ _id, name, username, picture }) => {
+                    users.map(({ _id, name, username, picture, clerkId }) => {
                         return (
                             <UserCard
                                 key={_id as string}
@@ -47,6 +47,7 @@ const Community = async ({ searchParams }: { searchParams: unknown }) => {
                                 name={name}
                                 username={username}
                                 imgURL={picture}
+                                clerkId={clerkId}
                             />
                         );
                     })
