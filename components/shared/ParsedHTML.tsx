@@ -1,8 +1,8 @@
 "use client";
 
-import React /*, { useEffect } */ from "react";
-// import Prism from "prismjs";
+import React from "react";
 import parse from "html-react-parser";
+// import Prism from "prismjs";
 
 // import "prismjs/components/prism-java";
 // import "prismjs/components/prism-c";
@@ -32,10 +32,10 @@ interface IParsedHTMLProps {
 
 const ParsedHTML = ({ data }: IParsedHTMLProps) => {
     // useEffect(() => {
-    //     // settimeout as mentioned in their doc
-    //     // seems like it fixes the additional
-    //     setTimeout(() => Prism.highlightAll(), 0);
-    // }, []);
+    //     setTimeout(() => {
+    //         Prism.highlightAll();
+    //     });
+    // }, [data]);
 
     return (
         <div className="text-dark100_light900 markdown w-full min-w-full">
