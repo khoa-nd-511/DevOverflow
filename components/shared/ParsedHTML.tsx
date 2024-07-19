@@ -37,7 +37,11 @@ const ParsedHTML = ({ data }: IParsedHTMLProps) => {
     //     setTimeout(() => Prism.highlightAll(), 0);
     // }, []);
 
-    return <div className="text-dark100_light900">{parse(data)}</div>;
+    return (
+        <div className="text-dark100_light900 markdown w-full min-w-full">
+            {parse(data)}
+        </div>
+    );
 };
 
 export default ParsedHTML;

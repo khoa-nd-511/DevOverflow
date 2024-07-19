@@ -51,25 +51,6 @@ pre[class*="language-"] {
     margin: 1em 0;
 }
 
-pre {
-    overflow: auto;
-    word-wrap: normal;
-    white-space: pre;
-    max-width: calc(100vw - 266px - 350px - 130px);
-}
-
-@media only screen and (max-width: 1280px) {
-    pre {
-        max-width: calc(100vw - 266px - 130px);
-    }
-}
-
-@media only screen and (max-width: 1024px) {
-    pre {
-        max-width: calc(100vw - 50px);
-    }
-}
-
 :not(pre) > code[class*="language-"] {
     color: #f0f6f6;
     background: #2a4555;
