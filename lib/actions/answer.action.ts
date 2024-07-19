@@ -82,8 +82,29 @@ export async function createAnswer(params: ICreateAnswerParams) {
             question,
         });
 
-        await QuestionModel.findByIdAndUpdate(question, {
-            $push: { answers: answer._id },
+        const queriedQuestion = await QuestionModel.findByIdAndUpdate(
+            question,
+            {
+                $push: { answers: answer._id },
+            }
+        );
+
+        //     user: Schema.Types.ObjectId;
+        // action: string;
+        // question: Schema.Types.ObjectId;
+        // answer: Schema.Types.ObjectId;
+        // tags: Schema.Types.ObjectId[];
+
+        if (!queriedQuestion) {
+            throw new Error("Unable to find question " + question);
+        }
+
+        await InteractionModel.create({
+            user: author,
+            action: "answer",
+            question,
+            answer: answer._id,
+            tags: queriedQuestion.tags,
         });
 
         await UserModel.findByIdAndUpdate(author, {
