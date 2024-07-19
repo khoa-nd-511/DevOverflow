@@ -24,8 +24,6 @@ const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
         clerkId: id,
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
     return (
         <>
             <div className="flex flex-col-reverse items-start justify-between sm:flex-row">
