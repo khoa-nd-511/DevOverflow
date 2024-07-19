@@ -27,7 +27,7 @@ export async function getAllTags(params: IGetAllTagsParams) {
             sortOption = {};
             switch (filter) {
                 case "popular":
-                    sortOption.questions = -1;
+                    sortOption.questions = 1;
                     break;
                 case "recent":
                     sortOption.createdAt = -1;
