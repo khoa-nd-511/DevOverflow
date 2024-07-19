@@ -48,7 +48,7 @@ const LocalSearch = ({
         <div className="relative w-full">
             <div
                 className={cn(
-                    "background-light800_darkgradient text-dark300_light900 relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4",
+                    "background-light800_dark300 text-dark300_light900 relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4",
                     iconPosition === "right" && "flex-row-reverse",
                     otherClasses
                 )}
@@ -65,7 +65,7 @@ const LocalSearch = ({
                     placeholder={placeholder}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="paragraph-regular no-focus placeholder background-light800_darkgradient ml-4 border-none shadow-none outline-none"
+                    className="paragraph-regular no-focus placeholder ml-4 border-none bg-transparent shadow-none outline-none"
                 />
             </div>
         </div>

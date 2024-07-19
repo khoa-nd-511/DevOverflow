@@ -50,7 +50,10 @@ const Filter = ({
 
     return (
         <div className={cn("relative", containerClasses)}>
-            <Select onValueChange={handleSelectFilter}>
+            <Select
+                defaultValue={parsedSearchParams.filter}
+                onValueChange={handleSelectFilter}
+            >
                 <SelectTrigger
                     className={`body-regular light-border background-light800_dark300 text-dark500_light700 relative border px-5 py-2.5 ${otherClasses}`}
                 >
