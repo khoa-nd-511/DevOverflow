@@ -1,5 +1,7 @@
 # Devoverflow
-Devoverflow is a Q&A web application that allows users to ask questions, reply with answers, upvote/downvote content, and save questions for quick access in the future.
+Devoverflow is a Q&A web application that allows users to ask questions, reply with answers, upvote/downvote a question or ann answer, and save questions for quick access in the future.
+
+Try it here: https://devoverflow-flame.vercel.app
 
 ## Features
 - Ask Questions: Users can post their questions for the community.
