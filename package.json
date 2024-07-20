@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.1.6",
+    "@grafana/faro-web-sdk": "^1.8.2",
+    "@grafana/faro-web-tracing": "^1.8.2",
     "@hookform/resolvers": "^3.6.0",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-label": "^2.1.0",
@@ -43,6 +45,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@grafana/faro-webpack-plugin": "^0.1.1",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20",
     "@types/prismjs": "^1.26.4",

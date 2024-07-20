@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 import "./globals.css";
 import "../styles/prism.css";
+import "../lib/grafana";
 
 const inter = Inter({
     subsets: ["latin"],

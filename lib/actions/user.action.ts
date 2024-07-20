@@ -82,6 +82,7 @@ export async function getUserById(params: IGetUserByClerkIdParams) {
 export async function getUserInfo(params: IGetUserByClerkIdParams) {
     const { clerkId } = params;
     try {
+        console.log("getUserInfo start");
         await connectToDB();
 
         const user = await UserModel.findOne({ clerkId });
@@ -89,6 +90,8 @@ export async function getUserInfo(params: IGetUserByClerkIdParams) {
         if (!user) {
             throw new Error("User not found" + clerkId);
         }
+
+        const start = Date.now();
 
         const [totalQuestions, totalAnswers] = await Promise.all([
             QuestionModel.countDocuments({
@@ -98,6 +101,7 @@ export async function getUserInfo(params: IGetUserByClerkIdParams) {
                 author: user._id,
             }),
         ]);
+        console.log("getUserInfo end", Date.now() - start);
 
         return { user, totalAnswers, totalQuestions };
     } catch (error) {
